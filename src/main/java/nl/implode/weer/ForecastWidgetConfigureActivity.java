@@ -1,8 +1,10 @@
 package nl.implode.weer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -38,27 +40,37 @@ public class ForecastWidgetConfigureActivity extends Activity {
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     DelayAutoCompleteTextView mAppWidgetLocation;
     TextView mStationId;
+    String stationId;
+    String stationName;
+
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             final Context context = ForecastWidgetConfigureActivity.this;
+            if (stationName != null && stationId != null) {
 
-            // When the button is clicked, store the string locally
-            mAppWidgetLocation = (DelayAutoCompleteTextView) findViewById(R.id.appwidget_location);
-            mStationId = (TextView) findViewById(R.id.appwidget_stationId);
-            String stationName = mAppWidgetLocation.getText().toString();
-            String stationId = mStationId.getText().toString();
-            savePref(context, "stationName", mAppWidgetId, stationName);
-            savePref(context, "stationId", mAppWidgetId, stationId);
+                // When the button is clicked, store the settings locally
+                //mAppWidgetLocation = (DelayAutoCompleteTextView) findViewById(R.id.appwidget_location);
+                //mStationId = (TextView) findViewById(R.id.appwidget_stationId);
 
-            // It is the responsibility of the configuration activity to update the app widget
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            ForecastWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
+                savePref(context, "stationName", mAppWidgetId, stationName);
+                savePref(context, "stationId", mAppWidgetId, stationId);
 
-            // Make sure we pass back the original appWidgetId
-            Intent resultValue = new Intent();
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-            setResult(RESULT_OK, resultValue);
-            finish();
+                // It is the responsibility of the configuration activity to update the app widget
+                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+                ForecastWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
+
+                // Make sure we pass back the original appWidgetId
+                Intent resultValue = new Intent();
+                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+                setResult(RESULT_OK, resultValue);
+                finish();
+                return;
+            }
+            new AlertDialog.Builder(context)
+                    .setTitle("No station selected")
+                    .setMessage("Please select a station from the list before adding widget")
+                    .setPositiveButton("OK", null)
+                    .show();
         }
     };
 
@@ -112,6 +124,8 @@ public class ForecastWidgetConfigureActivity extends Activity {
                 WeatherStation weatherStation = (WeatherStation) adapterView.getItemAtPosition(position);
                 mAppWidgetLocation.setText(weatherStation.name);
                 mStationId.setText(String.valueOf(weatherStation._id));
+                stationName = weatherStation.name;
+                stationId = String.valueOf(weatherStation._id);
             }
         });
 

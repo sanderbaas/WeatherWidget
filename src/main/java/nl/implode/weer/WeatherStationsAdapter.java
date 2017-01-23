@@ -27,7 +27,7 @@ public class WeatherStationsAdapter extends ArrayAdapter<WeatherStation> {
         }
         // Lookup view for data population
         TextView text1 = (TextView) convertView.findViewById(android.R.id.text1);
-        TextView text2 = (TextView) convertView.findViewById(R.id.text2);
+        TextView text2 = (TextView) convertView.findViewById(android.R.id.text2);
         // Populate the data into the template view using the data object
         text1.setText(weatherstation._id + ", "+weatherstation.country);
         text2.setText(weatherstation.name);
