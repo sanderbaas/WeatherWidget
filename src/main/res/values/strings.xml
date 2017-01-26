@@ -60,5 +60,7 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="location">Location</string>
+    <string name="stationId">Station ID</string>
+    <string name="country">Country</string>
     <string name="add_widget">Add widget</string>
 </resources>

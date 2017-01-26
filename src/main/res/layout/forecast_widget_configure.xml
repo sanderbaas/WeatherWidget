@@ -29,7 +29,16 @@
     </FrameLayout>
 
     <TextView
+        android:layout_weight="1"
+        android:text="@string/stationId"
         android:id="@+id/appwidget_stationId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_weight="1"
+        android:text="@string/country"
+        android:id="@+id/appwidget_stationCountry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -38,6 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_gravity="right"
         android:text="@string/add_widget" />
 
 </LinearLayout>

@@ -113,6 +113,7 @@ public class ForecastWidgetConfigureActivity extends Activity {
         setContentView(R.layout.forecast_widget_configure);
         final DelayAutoCompleteTextView mAppWidgetLocation = (DelayAutoCompleteTextView) findViewById(R.id.appwidget_location);
         final TextView mStationId = (TextView) findViewById(R.id.appwidget_stationId);
+        final TextView mStationCountry = (TextView) findViewById(R.id.appwidget_stationCountry);
         mAppWidgetLocation.setThreshold(3);
         mAppWidgetLocation.setAdapter(new WeatherStationAutoCompleteAdapter(this)); // 'this' is Activity instance
         mAppWidgetLocation.setLoadingIndicator(
@@ -123,6 +124,7 @@ public class ForecastWidgetConfigureActivity extends Activity {
                 WeatherStation weatherStation = (WeatherStation) adapterView.getItemAtPosition(position);
                 mAppWidgetLocation.setText(weatherStation.name);
                 mStationId.setText(String.valueOf(weatherStation._id));
+                mStationCountry.setText(weatherStation.country);
                 stationName = weatherStation.name;
                 stationCountry = weatherStation.country;
                 stationId = String.valueOf(weatherStation._id);
