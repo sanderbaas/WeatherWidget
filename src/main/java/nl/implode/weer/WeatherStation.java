@@ -1,5 +1,6 @@
 package nl.implode.weer;
 
+import android.os.StrictMode;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -7,6 +8,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by sander on 19-1-17.
@@ -40,6 +45,30 @@ public class WeatherStation {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public JSONObject get5DayForecast() {
+        JSONObject jsonResult = new JSONObject();
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        String apiEntryPoint = "http://api.openweathermap.org/data/2.5/find?";
+        String appId = "fbc3d19917801786e46dbacd55d2ee9c";
+        Integer maxResults = 10;
+
+        String url = apiEntryPoint + "appid=" + appId + "&cnt=" + String.valueOf(maxResults) + "&q=" + name;
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(url).build();
+        String result = "";
+        try {
+            Response response = client.newCall(request).execute();
+            result = response.body().string();
+            jsonResult = new JSONObject(result);
+        } catch(Exception e) {
+             e.printStackTrace();
+        }
+
+        return jsonResult;
     }
 
     // Factory method to convert an array of JSON objects into a list of objects

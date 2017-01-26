@@ -6,7 +6,10 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
+
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -27,7 +30,12 @@ public class ForecastWidget extends AppWidgetProvider {
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widgetComponentName);
         CharSequence stationName = ForecastWidgetConfigureActivity.loadPref(context, "stationName", appWidgetId);
         CharSequence stationCountry = ForecastWidgetConfigureActivity.loadPref(context, "stationCountry", appWidgetId);
-        CharSequence stationId = ForecastWidgetConfigureActivity.loadPref(context, "stationId", appWidgetId);
+        String stationId = ForecastWidgetConfigureActivity.loadPref(context, "stationId", appWidgetId);
+
+        WeatherStationsDatabase weatherStationsDatabase = new WeatherStationsDatabase(context);
+        WeatherStation weatherStation = null;
+        weatherStation = weatherStationsDatabase.findWeatherStation(Integer.valueOf(stationId));
+        JSONObject forecast = weatherStation.get5DayForecast();
 
         Calendar cal = Calendar.getInstance();
         Date updateTime = cal.getTime();
