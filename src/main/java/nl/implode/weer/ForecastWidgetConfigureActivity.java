@@ -42,6 +42,7 @@ public class ForecastWidgetConfigureActivity extends Activity {
     TextView mStationId;
     String stationId;
     String stationName;
+    String stationCountry;
 
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
@@ -49,10 +50,8 @@ public class ForecastWidgetConfigureActivity extends Activity {
             if (stationName != null && stationId != null) {
 
                 // When the button is clicked, store the settings locally
-                //mAppWidgetLocation = (DelayAutoCompleteTextView) findViewById(R.id.appwidget_location);
-                //mStationId = (TextView) findViewById(R.id.appwidget_stationId);
-
                 savePref(context, "stationName", mAppWidgetId, stationName);
+                savePref(context, "stationCountry", mAppWidgetId, stationCountry);
                 savePref(context, "stationId", mAppWidgetId, stationId);
 
                 // It is the responsibility of the configuration activity to update the app widget
@@ -125,6 +124,7 @@ public class ForecastWidgetConfigureActivity extends Activity {
                 mAppWidgetLocation.setText(weatherStation.name);
                 mStationId.setText(String.valueOf(weatherStation._id));
                 stationName = weatherStation.name;
+                stationCountry = weatherStation.country;
                 stationId = String.valueOf(weatherStation._id);
             }
         });
