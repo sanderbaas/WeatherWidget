@@ -43,7 +43,8 @@ public class ForecastWidget extends AppWidgetProvider {
         CharSequence stationName = ForecastWidgetConfigureActivity.loadPref(context, "stationName", appWidgetId);
         CharSequence stationCountry = ForecastWidgetConfigureActivity.loadPref(context, "stationCountry", appWidgetId);
         String stationId = ForecastWidgetConfigureActivity.loadPref(context, "stationId", appWidgetId);
-        Boolean useCelcius = true;
+        Boolean useCelsius = true;
+        Boolean useFahrenheit = false;
 
         JSONObject forecast = new JSONObject();
         WeatherStationsDatabase weatherStationsDatabase = new WeatherStationsDatabase(context);
@@ -101,8 +102,11 @@ public class ForecastWidget extends AppWidgetProvider {
                     //RemoteViews forecastLineView = new RemoteViews(context.getPackageName(), R.layout.forecastline);
                     for (int j = 0; j < dayForecasts.length(); j++) {
                         Double temp = Double.valueOf(list.getJSONObject(j).getJSONObject("main").getString("temp"));
-                        if (useCelcius) {
+                        if (useCelsius) {
                             temp = temp - 273.15;
+                        }
+                        if (useFahrenheit) {
+                            temp = 9/5*(temp - 273.15) + 32;
                         }
                         RemoteViews forecastView = new RemoteViews(context.getPackageName(), R.layout.forecast);
                         forecastView.setTextViewText(R.id.forecast_temp, String.valueOf(Math.round(temp)) + (char) 0x00B0);
@@ -111,9 +115,12 @@ public class ForecastWidget extends AppWidgetProvider {
                         } else {
                             forecastView.setTextColor(R.id.forecast_temp, Color.RED);
                         }
-                        String rain = "0mm";
+                        String rain = "";
                         if (list.getJSONObject(j).has("rain") && list.getJSONObject(j).getJSONObject("rain").has("3h")) {
-                            rain = list.getJSONObject(j).getJSONObject("rain").getString("3h") + "mm";
+                            rain = list.getJSONObject(j).getJSONObject("rain").getString("3h");
+                            Float fRain = Math.round(10F * Float.valueOf(rain))/10F;
+                            if (fRain < 0.1) { fRain = 0.1F; }
+                            rain = String.valueOf(fRain) + "mm";
                         }
                         forecastView.setTextViewText(R.id.forecast_rain, rain);
                         views.addView(R.id.widgetForecasts, forecastView);
