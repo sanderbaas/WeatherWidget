@@ -3,6 +3,8 @@
     package="nl.implode.weer">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <service android:name="GridWidgetService"
+        android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     <application
         android:allowBackup="true"
