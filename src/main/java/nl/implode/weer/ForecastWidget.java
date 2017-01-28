@@ -45,11 +45,14 @@ public class ForecastWidget extends AppWidgetProvider {
         String stationId = ForecastWidgetConfigureActivity.loadPref(context, "stationId", appWidgetId);
         Boolean useCelcius = true;
 
+        JSONObject forecast = new JSONObject();
         WeatherStationsDatabase weatherStationsDatabase = new WeatherStationsDatabase(context);
         WeatherStation weatherStation = null;
-        weatherStation = weatherStationsDatabase.findWeatherStation(Integer.valueOf(stationId));
-        JSONObject forecast = weatherStation.get5DayForecast();
-        Log.d("nl.implode.weer", forecast.toString());
+        if (!stationId.isEmpty()) {
+            weatherStation = weatherStationsDatabase.findWeatherStation(Integer.valueOf(stationId));
+            forecast = weatherStation.get5DayForecast();
+            Log.d("nl.implode.weer", forecast.toString());
+        }
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.forecast_widget);
@@ -60,10 +63,11 @@ public class ForecastWidget extends AppWidgetProvider {
         JSONObject days = new JSONObject();
         //only update view when we have new forecast data, preventing empty results
         try {
-            Log.d("nl.implode.weer",String.valueOf(forecast.getJSONArray("list").length()));
-            //if (forecast.getString("cod") == "200" && forecast.getJSONArray("list").length() > 0) {
+            if (forecast.has("list") && forecast.getJSONArray("list").length() > 0) {
+                Log.d("nl.implode.weer", String.valueOf(forecast.getJSONArray("list").length()));
+                //if (forecast.getString("cod") == "200" && forecast.getJSONArray("list").length() > 0) {
                 Calendar cal = Calendar.getInstance();
-                Log.d("nl.implode.weer",cal.getTimeZone().toString());
+                Log.d("nl.implode.weer", cal.getTimeZone().toString());
                 Date updateTime = cal.getTime();
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.GERMANY);
                 String lastUpdate = sdf.format(updateTime);
@@ -72,20 +76,20 @@ public class ForecastWidget extends AppWidgetProvider {
 
 
                 JSONArray list = forecast.getJSONArray("list");
-                for (int i=0; i<list.length();i++) {
-                    cal.setTimeInMillis(list.getJSONObject(i).getInt("dt")*1000L);
+                for (int i = 0; i < list.length(); i++) {
+                    cal.setTimeInMillis(list.getJSONObject(i).getInt("dt") * 1000L);
                     //String day = String.valueOf(cal.get(Calendar.DAY_OF_YEAR));
                     SimpleDateFormat sdfDate = new SimpleDateFormat("EEEE d MMMM");
                     String day = sdfDate.format(cal.getTime());
                     if (!days.has(day)) {
-                        days.put(day,new JSONArray());
+                        days.put(day, new JSONArray());
                     }
                     days.getJSONArray(day).put(list.getJSONObject(i));
                 }
 
                 // remove old forecasts
                 views.removeAllViews(R.id.widgetForecasts);
-                Iterator<String> keys= days.keys();
+                Iterator<String> keys = days.keys();
                 while (keys.hasNext()) {
                     String dayName = (String) keys.next();
                     JSONArray dayForecasts = days.getJSONArray(dayName);
@@ -95,14 +99,16 @@ public class ForecastWidget extends AppWidgetProvider {
                     views.addView(R.id.widgetForecasts, dayLineView);
 
                     //RemoteViews forecastLineView = new RemoteViews(context.getPackageName(), R.layout.forecastline);
-                    for (int j=0; j<dayForecasts.length(); j++) {
+                    for (int j = 0; j < dayForecasts.length(); j++) {
                         Double temp = Double.valueOf(list.getJSONObject(j).getJSONObject("main").getString("temp"));
-                        if (useCelcius) { temp = temp - 273.15; }
+                        if (useCelcius) {
+                            temp = temp - 273.15;
+                        }
                         RemoteViews forecastView = new RemoteViews(context.getPackageName(), R.layout.forecast);
-                        forecastView.setTextViewText(R.id.forecast_temp, String.valueOf(Math.round(temp)) +(char) 0x00B0);
-                        if (temp < 1){
+                        forecastView.setTextViewText(R.id.forecast_temp, String.valueOf(Math.round(temp)) + (char) 0x00B0);
+                        if (temp < 1) {
                             forecastView.setTextColor(R.id.forecast_temp, Color.BLUE);
-                        }else{
+                        } else {
                             forecastView.setTextColor(R.id.forecast_temp, Color.RED);
                         }
                         String rain = "0mm";
@@ -114,6 +120,7 @@ public class ForecastWidget extends AppWidgetProvider {
                     }
                     //views.addView(R.id.widgetForecasts, forecastLineView);
                 }
+            }
         }catch(Exception e) {
             e.printStackTrace();
         } finally {
