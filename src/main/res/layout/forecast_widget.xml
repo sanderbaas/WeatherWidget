@@ -2,7 +2,7 @@
     android:id="@+id/forecast_widget"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#09C"
+    android:background="#ffffff"
     android:padding="@dimen/widget_margin">
     <LinearLayout
         android:orientation="horizontal"
@@ -10,17 +10,19 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:background="#3f51b5"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:id="@+id/widgetMetaData">
 
     <TextView
         android:id="@+id/stationName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:background="#09C"
-        android:textColor="#ffffff"
-        android:textSize="24sp"
-        android:textStyle="bold|italic"
+        android:layout_margin="4dp"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#fff"
         android:text="Location" />
 
     <TextView
@@ -28,39 +30,31 @@
         android:layout_below="@+id/stationName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
         android:text="Country"
-        android:background="#09C"
-        android:textColor="#ffffff"
-        android:textSize="24sp"
-        android:textStyle="italic" />
+        android:textSize="12sp"
+        android:layout_margin="4dp"
+        android:textColor="#fff"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#ffffff"
-        android:id="@+id/stationId"
-        android:layout_below="@+id/stationCountry"
-        android:text="Station ID" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#ffffff"
+        android:textColor="#fff"
+        android:textSize="12sp"
+        android:layout_margin="4dp"
         android:id="@+id/updateTime"
-        android:text="Last update"
-        android:layout_below="@+id/stationId" />
+        android:text="Last update" />
 
     </LinearLayout>
 
     <GridLayout
         android:id="@+id/widgetForecasts"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/widgetMetaData"
         android:columnCount="8"
-        android:rowCount="8">
+        android:rowCount="11">
     </GridLayout>
 
 </RelativeLayout>

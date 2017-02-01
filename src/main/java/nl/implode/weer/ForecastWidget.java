@@ -18,6 +18,8 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -59,21 +61,18 @@ public class ForecastWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.forecast_widget);
         views.setTextViewText(R.id.stationName, stationName);
         views.setTextViewText(R.id.stationCountry, stationCountry);
-        views.setTextViewText(R.id.stationId, stationId);
+        //views.setTextViewText(R.id.stationId, stationId);
 
         JSONObject days = new JSONObject();
         //only update view when we have new forecast data, preventing empty results
         try {
             if (forecast.has("list") && forecast.getJSONArray("list").length() > 0) {
-                Log.d("nl.implode.weer", String.valueOf(forecast.getJSONArray("list").length()));
-                //if (forecast.getString("cod") == "200" && forecast.getJSONArray("list").length() > 0) {
                 Calendar cal = Calendar.getInstance();
-                Log.d("nl.implode.weer", cal.getTimeZone().toString());
                 Date updateTime = cal.getTime();
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.GERMANY);
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.GERMANY);
                 String lastUpdate = sdf.format(updateTime);
 
-                views.setTextViewText(R.id.updateTime, "updated: " + lastUpdate);
+                views.setTextViewText(R.id.updateTime, lastUpdate);
 
 
                 JSONArray list = forecast.getJSONArray("list");
@@ -90,8 +89,23 @@ public class ForecastWidget extends AppWidgetProvider {
 
                 // remove old forecasts
                 views.removeAllViews(R.id.widgetForecasts);
+
+                // add times
+                String[] times = {
+                        "0:00", "3:00","6:00","9:00","12:00","15:00","18:00","21:00"
+                };
+
+                for (int l=0; l<times.length; l++) {
+                    RemoteViews timeView = new RemoteViews(context.getPackageName(), R.layout.times);
+                    timeView.setTextViewText(R.id.time, times[l]);
+                    views.addView(R.id.widgetForecasts, timeView);
+                }
+
                 Iterator<String> keys = days.keys();
-                while (keys.hasNext()) {
+                Integer maxDays = 5;
+                Integer numDays = 0;
+                while (keys.hasNext() && numDays < maxDays) {
+                    numDays++;
                     String dayName = (String) keys.next();
                     JSONArray dayForecasts = days.getJSONArray(dayName);
                     // add tablerow with just day name
@@ -101,13 +115,15 @@ public class ForecastWidget extends AppWidgetProvider {
 
                     //RemoteViews forecastLineView = new RemoteViews(context.getPackageName(), R.layout.forecastline);
                     for (int j = 0; j < dayForecasts.length(); j++) {
-                        Double temp = Double.valueOf(list.getJSONObject(j).getJSONObject("main").getString("temp"));
+                        JSONObject dayForecast = dayForecasts.getJSONObject(j);
+                        Double temp = Double.valueOf(dayForecast.getJSONObject("main").getString("temp"));
                         if (useCelsius) {
                             temp = temp - 273.15;
                         }
                         if (useFahrenheit) {
                             temp = 9/5*(temp - 273.15) + 32;
                         }
+
                         RemoteViews forecastView = new RemoteViews(context.getPackageName(), R.layout.forecast);
                         forecastView.setTextViewText(R.id.forecast_temp, String.valueOf(Math.round(temp)) + (char) 0x00B0);
                         if (temp < 1) {
@@ -116,16 +132,28 @@ public class ForecastWidget extends AppWidgetProvider {
                             forecastView.setTextColor(R.id.forecast_temp, Color.RED);
                         }
                         String rain = "";
-                        if (list.getJSONObject(j).has("rain") && list.getJSONObject(j).getJSONObject("rain").has("3h")) {
-                            rain = list.getJSONObject(j).getJSONObject("rain").getString("3h");
-                            Float fRain = Math.round(10F * Float.valueOf(rain))/10F;
-                            if (fRain < 0.1) { fRain = 0.1F; }
-                            rain = String.valueOf(fRain) + "mm";
+                        if (dayForecast.has("rain") && dayForecast.getJSONObject("rain").has("3h")) {
+                            String sRain = dayForecast.getJSONObject("rain").getString("3h");
+                            Float fRain = Float.valueOf(sRain);
+                            String lessThan = "";
+                            if (fRain < 0.1) {
+                                lessThan = "<";
+                                fRain = new Float(0.1);
+                            }
+                            rain = lessThan + String.format("%.1f", fRain) + " mm";
                         }
                         forecastView.setTextViewText(R.id.forecast_rain, rain);
+
+                        if (dayForecast.has("weather") && dayForecast.getJSONArray("weather").length()>0) {
+                            JSONArray weather = dayForecast.getJSONArray("weather");
+                            if (weather.getJSONObject(0).has("icon")) {
+                                String icon = "icon" + weather.getJSONObject(0).getString("icon");
+                                forecastView.setImageViewResource(R.id.forecast_icon, context.getResources().getIdentifier(icon, "drawable", context.getPackageName()));
+                            }
+                        }
+
                         views.addView(R.id.widgetForecasts, forecastView);
                     }
-                    //views.addView(R.id.widgetForecasts, forecastLineView);
                 }
             }
         }catch(Exception e) {
