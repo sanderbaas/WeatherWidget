@@ -161,7 +161,7 @@ public class ForecastWidget extends AppWidgetProvider {
                                 lessThan = "<";
                                 fSnow = new Float(0.1);
                             }
-                            rain = "*" + lessThan + String.format("%.1f", fSnow) + " mm";
+                            rain = (char) 0x2746 + " " + lessThan + String.format("%.1f", fSnow) + " mm";
                         }
                         forecastView.setTextViewText(R.id.forecast_rain, rain);
 
@@ -185,7 +185,7 @@ public class ForecastWidget extends AppWidgetProvider {
                             if (fSpeed >= 28.5 && fSpeed < 32.7) { bft = "11"; }
                             if (fSpeed >= 32.7) { bft = "12"; }
 
-                            String dir = "N";
+                            String dir = "wind_n";
                             if (fDeg >= 22.5 && fDeg < 67.5) { dir = "wind_ne"; }
                             if (fDeg >= 67.5 && fDeg < 112.5) { dir = "wind_e"; }
                             if (fDeg >= 112.5 && fDeg < 157.5) { dir = "wind_se"; }
@@ -194,7 +194,7 @@ public class ForecastWidget extends AppWidgetProvider {
                             if (fDeg >= 247.5 && fDeg < 292.5) { dir = "wind_w"; }
                             if (fDeg >= 292.5 && fDeg < 337.5) { dir = "wind_nw"; }
 
-                            wind = context.getResources().getString(context.getResources().getIdentifier(dir, "string", context.getPackageName())) + " " + bft;
+                            wind = (char) 0x2332 + " " + context.getResources().getString(context.getResources().getIdentifier(dir, "string", context.getPackageName())) + " " + bft;
 
                         }
                         forecastView.setTextViewText(R.id.forecast_wind, wind);
