@@ -59,17 +59,17 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="appwidget_text">EXAMPLE</string>
-    <string name="location">Location</string>
+    <string name="location">Locatie</string>
     <string name="stationId">Station ID</string>
-    <string name="country">Country</string>
-    <string name="add_widget">Add widget</string>
+    <string name="country">Land</string>
+    <string name="add_widget">Widget toevoegen</string>
 
     <string name="wind_n">N</string>
-    <string name="wind_ne">NE</string>
+    <string name="wind_ne">NO</string>
     <string name="wind_nw">NW</string>
-    <string name="wind_s">S</string>
-    <string name="wind_se">SE</string>
-    <string name="wind_sw">SW</string>
-    <string name="wind_e">E</string>
+    <string name="wind_s">Z</string>
+    <string name="wind_se">ZO</string>
+    <string name="wind_sw">ZW</string>
+    <string name="wind_e">O</string>
     <string name="wind_w">W</string>
 </resources>

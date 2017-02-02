@@ -50,12 +50,12 @@
     <GridLayout
         android:id="@+id/widgetForecasts"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/widgetMetaData"
         android:columnCount="8"
         android:layoutDirection="locale"
-        android:rowCount="11">
+        android:rowCount="9">
     </GridLayout>
 
 </RelativeLayout>

@@ -108,7 +108,7 @@ public class ForecastWidget extends AppWidgetProvider {
                 }
 
                 Iterator<String> keys = days.keys();
-                Integer maxDays = 5;
+                Integer maxDays = 4;
                 Integer numDays = 0;
                 while (keys.hasNext() && numDays < maxDays) {
                     numDays++;
@@ -153,7 +153,51 @@ public class ForecastWidget extends AppWidgetProvider {
                             }
                             rain = lessThan + String.format("%.1f", fRain) + " mm";
                         }
+                        if (dayForecast.has("snow") && dayForecast.getJSONObject("snow").has("3h")) {
+                            String sSnow = dayForecast.getJSONObject("snow").getString("3h");
+                            Float fSnow = Float.valueOf(sSnow);
+                            String lessThan = "";
+                            if (fSnow < 0.1) {
+                                lessThan = "<";
+                                fSnow = new Float(0.1);
+                            }
+                            rain = "*" + lessThan + String.format("%.1f", fSnow) + " mm";
+                        }
                         forecastView.setTextViewText(R.id.forecast_rain, rain);
+
+                        String wind = "";
+                        if (dayForecast.has("wind") && dayForecast.getJSONObject("wind").has("speed") && dayForecast.getJSONObject("wind").has("deg")) {
+                            String speed = dayForecast.getJSONObject("wind").getString("speed");
+                            String deg = dayForecast.getJSONObject("wind").getString("deg");
+                            Float fSpeed = Float.valueOf(speed);
+                            Float fDeg = Float.valueOf(deg);
+                            String bft = "0";
+                            if (fSpeed >= 0.3 && fSpeed < 1.6) { bft = "1"; }
+                            if (fSpeed >= 1.6 && fSpeed < 3.4) { bft = "2"; }
+                            if (fSpeed >= 3.4 && fSpeed < 5.5) { bft = "3"; }
+                            if (fSpeed >= 5.5 && fSpeed < 8.0) { bft = "4"; }
+                            if (fSpeed >= 8.0 && fSpeed < 10.8) { bft = "5"; }
+                            if (fSpeed >= 10.8 && fSpeed < 13.9) { bft = "6"; }
+                            if (fSpeed >= 13.9 && fSpeed < 17.2) { bft = "7"; }
+                            if (fSpeed >= 17.2 && fSpeed < 20.8) { bft = "8"; }
+                            if (fSpeed >= 20.8 && fSpeed < 24.5) { bft = "9"; }
+                            if (fSpeed >= 24.5 && fSpeed < 28.5) { bft = "10"; }
+                            if (fSpeed >= 28.5 && fSpeed < 32.7) { bft = "11"; }
+                            if (fSpeed >= 32.7) { bft = "12"; }
+
+                            String dir = "N";
+                            if (fDeg >= 22.5 && fDeg < 67.5) { dir = "wind_ne"; }
+                            if (fDeg >= 67.5 && fDeg < 112.5) { dir = "wind_e"; }
+                            if (fDeg >= 112.5 && fDeg < 157.5) { dir = "wind_se"; }
+                            if (fDeg >= 157.5 && fDeg < 202.5) { dir = "wind_s"; }
+                            if (fDeg >= 202.5 && fDeg < 247.5) { dir = "wind_sw"; }
+                            if (fDeg >= 247.5 && fDeg < 292.5) { dir = "wind_w"; }
+                            if (fDeg >= 292.5 && fDeg < 337.5) { dir = "wind_nw"; }
+
+                            wind = context.getResources().getString(context.getResources().getIdentifier(dir, "string", context.getPackageName())) + " " + bft;
+
+                        }
+                        forecastView.setTextViewText(R.id.forecast_wind, wind);
 
                         if (dayForecast.has("weather") && dayForecast.getJSONArray("weather").length()>0) {
                             JSONArray weather = dayForecast.getJSONArray("weather");

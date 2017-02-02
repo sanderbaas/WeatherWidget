@@ -4,6 +4,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_columnWeight="1"
+    android:layout_marginBottom="6dp"
+    android:layout_marginTop="6dp"
     >
     <ImageView
         android:id="@+id/forecast_icon"
@@ -14,6 +16,14 @@
         android:id="@+id/forecast_temp"
         android:layout_width="wrap_content"
         android:textSize="11sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content">
+    </TextView>
+    <TextView
+        android:id="@+id/forecast_wind"
+        android:layout_width="wrap_content"
+        android:textSize="8sp"
+        android:textColor="#000"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content">
     </TextView>
