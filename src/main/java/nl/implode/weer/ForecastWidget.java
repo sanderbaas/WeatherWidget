@@ -103,10 +103,6 @@ public class ForecastWidget extends AppWidgetProvider {
                 views.removeAllViews(R.id.widgetForecasts);
 
                 // add times
-                String[] times = {
-                        "0:00", "3:00","6:00","9:00","12:00","15:00","18:00","21:00"
-                };
-
                 for (int l=0; l<times.length; l++) {
                     RemoteViews timeView = new RemoteViews(context.getPackageName(), R.layout.times);
                     timeView.setTextViewText(R.id.time, times[l]);
