@@ -76,13 +76,25 @@ public class ForecastWidget extends AppWidgetProvider {
 
 
                 JSONArray list = forecast.getJSONArray("list");
+                String[] times = {
+                        "0:00", "3:00","6:00","9:00","12:00","15:00","18:00","21:00"
+                };
+                Integer dayNum = 0;
+                Integer timeNum = 0;
                 for (int i = 0; i < list.length(); i++) {
                     cal.setTimeInMillis(list.getJSONObject(i).getInt("dt") * 1000L);
-                    //String day = String.valueOf(cal.get(Calendar.DAY_OF_YEAR));
                     SimpleDateFormat sdfDate = new SimpleDateFormat("EEEE d MMMM");
                     String day = sdfDate.format(cal.getTime());
                     if (!days.has(day)) {
+                        dayNum++;
                         days.put(day, new JSONArray());
+                    }
+                    if (dayNum==2) {
+                        // gather times of second day
+                        SimpleDateFormat sdfTime = new SimpleDateFormat("H:mm");
+                        String time = sdfTime.format(cal.getTime());
+                        times[timeNum] = time;
+                        timeNum++;
                     }
                     days.getJSONArray(day).put(list.getJSONObject(i));
                 }
