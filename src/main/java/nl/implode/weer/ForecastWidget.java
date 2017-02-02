@@ -119,7 +119,12 @@ public class ForecastWidget extends AppWidgetProvider {
                     dayLineView.setTextViewText(R.id.day, dayName);
                     views.addView(R.id.widgetForecasts, dayLineView);
 
-                    //RemoteViews forecastLineView = new RemoteViews(context.getPackageName(), R.layout.forecastline);
+                    for (int n = 0; n < (8-dayForecasts.length()); n++) {
+                        // add empty forecast
+                        RemoteViews forecastView = new RemoteViews(context.getPackageName(), R.layout.forecast);
+                        views.addView(R.id.widgetForecasts, forecastView);
+                    }
+
                     for (int j = 0; j < dayForecasts.length(); j++) {
                         JSONObject dayForecast = dayForecasts.getJSONObject(j);
                         Double temp = Double.valueOf(dayForecast.getJSONObject("main").getString("temp"));

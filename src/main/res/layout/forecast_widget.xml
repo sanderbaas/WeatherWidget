@@ -54,6 +54,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/widgetMetaData"
         android:columnCount="8"
+        android:layoutDirection="locale"
         android:rowCount="11">
     </GridLayout>
 
