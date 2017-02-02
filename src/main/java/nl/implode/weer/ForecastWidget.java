@@ -54,14 +54,12 @@ public class ForecastWidget extends AppWidgetProvider {
         if (!stationId.isEmpty()) {
             weatherStation = weatherStationsDatabase.findWeatherStation(Integer.valueOf(stationId));
             forecast = weatherStation.get5DayForecast();
-            Log.d("nl.implode.weer", forecast.toString());
         }
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.forecast_widget);
         views.setTextViewText(R.id.stationName, stationName);
         views.setTextViewText(R.id.stationCountry, stationCountry);
-        //views.setTextViewText(R.id.stationId, stationId);
 
         JSONObject days = new JSONObject();
         //only update view when we have new forecast data, preventing empty results
