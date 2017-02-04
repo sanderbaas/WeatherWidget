@@ -6,6 +6,5 @@
     android:layout_margin="4dp"
     android:textColor="#000"
     android:text="0:00"
-    android:layout_gravity="center_horizontal"
     android:layout_columnWeight="1"
     android:id="@+id/time" />
