@@ -7,10 +7,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
@@ -87,7 +89,7 @@ public class ForecastWidget extends AppWidgetProvider {
                         dayNum++;
                         days.put(day, new JSONArray());
                     }
-                    if (dayNum==2) {
+                    if (dayNum == 2) {
                         // gather times of second day
                         SimpleDateFormat sdfTime = new SimpleDateFormat("H:mm");
                         String time = sdfTime.format(cal.getTime());
@@ -137,7 +139,7 @@ public class ForecastWidget extends AppWidgetProvider {
 
                         RemoteViews forecastView = new RemoteViews(context.getPackageName(), R.layout.forecast);
                         forecastView.setTextViewText(R.id.forecast_temp, String.valueOf(Math.round(temp)) + (char) 0x00B0);
-                        if (temp < 1) {
+                        if (Math.round(temp) < 0) {
                             forecastView.setTextColor(R.id.forecast_temp, Color.BLUE);
                         } else {
                             forecastView.setTextColor(R.id.forecast_temp, Color.RED);
