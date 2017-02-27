@@ -40,9 +40,7 @@
         <item>1</item>
     </string-array>
 
-    <string name="location">Location</string>
-    <string name="stationId">Station ID</string>
-    <string name="country">Country</string>
+    <string name="location">Find a location</string>
     <string name="add_widget">Add widget</string>
 
     <string name="wind_n">N</string>
