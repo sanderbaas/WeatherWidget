@@ -6,15 +6,18 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,14 +38,27 @@ public class ForecastWidgetService extends Service {
         return START_NOT_STICKY;
     }
 
-    private void processForecasts(Context context, JSONObject forecast, RemoteViews views, Boolean useCelsius, Boolean useFahrenheit) {
+    private void processForecasts(Context context, JSONObject forecast, RemoteViews views) {
         JSONObject days = new JSONObject();
+        // rainScale (0 mm, 1 inch)
+        // tempScale (0 Celsius, 1 Fahrenheit, 2 Kelvin)
+        // time (0 24h, 1 am/pm)
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+
+        String prefTime = sharedPrefs.getString("time", "0");
+        String prefTempScale = sharedPrefs.getString("temp_scale", "0");
+        String prefRainScale = sharedPrefs.getString("rain_scale", "0");
+
         try {
             //only update view when we have new forecast data, preventing empty results
             if (forecast.has("list") && forecast.getJSONArray("list").length() > 0) {
                 Calendar cal = Calendar.getInstance();
                 Date updateTime = cal.getTime();
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.GERMANY);
+                if (prefTime.equals("1")) {
+                    sdf = new SimpleDateFormat("KK:mm a");
+                }
                 String lastUpdate = sdf.format(updateTime);
 
                 views.setTextViewText(R.id.updateTime, lastUpdate);
@@ -56,7 +72,7 @@ public class ForecastWidgetService extends Service {
                 Integer timeNum = 0;
                 for (int i = 0; i < list.length(); i++) {
                     cal.setTimeInMillis(list.getJSONObject(i).getInt("dt") * 1000L);
-                    SimpleDateFormat sdfDate = new SimpleDateFormat("EEEE d MMMM");
+                    SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
                     String day = sdfDate.format(cal.getTime());
                     if (!days.has(day)) {
                         dayNum++;
@@ -65,7 +81,13 @@ public class ForecastWidgetService extends Service {
                     if (dayNum == 2) {
                         // gather times of second day
                         SimpleDateFormat sdfTime = new SimpleDateFormat("H:mm");
+                        if (prefTime.equals("1")) {
+                            sdfTime = new SimpleDateFormat("K:mma");
+                        }
                         String time = sdfTime.format(cal.getTime());
+                        time = time.replace("a.m.","").replace("p.m.","p");
+                        time = time.replace("AM","").replace("PM","p");
+                        time = time.replace("A.M.","").replace("P.M.","p");
                         times[timeNum] = time;
                         timeNum++;
                     }
@@ -88,10 +110,14 @@ public class ForecastWidgetService extends Service {
                 while (keys.hasNext() && numDays < maxDays) {
                     numDays++;
                     String dayName = (String) keys.next();
+                    SimpleDateFormat sdfDate = new SimpleDateFormat("EEEE d MMMM");
+                    SimpleDateFormat keyDate = new SimpleDateFormat("yyyy-MM-dd");
+
+                    String dayLabel = sdfDate.format(keyDate.parse(dayName));
                     JSONArray dayForecasts = days.getJSONArray(dayName);
                     // add tablerow with just day name
                     RemoteViews dayLineView = new RemoteViews(context.getPackageName(), R.layout.day);
-                    dayLineView.setTextViewText(R.id.day, dayName);
+                    dayLineView.setTextViewText(R.id.day, dayLabel);
                     views.addView(R.id.widgetForecasts, dayLineView);
 
                     for (int n = 0; n < (8-dayForecasts.length()); n++) {
@@ -103,16 +129,20 @@ public class ForecastWidgetService extends Service {
                     for (int j = 0; j < dayForecasts.length(); j++) {
                         JSONObject dayForecast = dayForecasts.getJSONObject(j);
                         Double temp = Double.valueOf(dayForecast.getJSONObject("main").getString("temp"));
-                        if (useCelsius) {
+                        Boolean isFreezing = temp < 273.15;
+
+                        if (prefTempScale.equals("0")) {
+                            // celsius
                             temp = temp - 273.15;
                         }
-                        if (useFahrenheit) {
+                        if (prefTempScale.equals("1")) {
+                            // fahrenheit
                             temp = 9/5*(temp - 273.15) + 32;
                         }
 
                         RemoteViews forecastView = new RemoteViews(context.getPackageName(), R.layout.forecast);
                         forecastView.setTextViewText(R.id.forecast_temp, String.valueOf(Math.round(temp)) + (char) 0x00B0);
-                        if (Math.round(temp) < 0) {
+                        if (isFreezing) {
                             forecastView.setTextColor(R.id.forecast_temp, Color.BLUE);
                         } else {
                             forecastView.setTextColor(R.id.forecast_temp, Color.RED);
@@ -121,22 +151,34 @@ public class ForecastWidgetService extends Service {
                         if (dayForecast.has("rain") && dayForecast.getJSONObject("rain").has("3h")) {
                             String sRain = dayForecast.getJSONObject("rain").getString("3h");
                             Float fRain = Float.valueOf(sRain);
+                            String postFix = " mm";
+                            if (prefRainScale.equals("1")) {
+                                // inches
+                                postFix = "\"";
+                                fRain = fRain / new Float(2.54);
+                            }
                             String lessThan = "";
                             if (fRain < 0.1) {
                                 lessThan = "<";
                                 fRain = new Float(0.1);
                             }
-                            rain = lessThan + String.format("%.1f", fRain) + " mm";
+                            rain = lessThan + String.format("%.1f", fRain) + postFix;
                         }
                         if (dayForecast.has("snow") && dayForecast.getJSONObject("snow").has("3h")) {
                             String sSnow = dayForecast.getJSONObject("snow").getString("3h");
                             Float fSnow = Float.valueOf(sSnow);
+                            String postFix = " mm";
+                            if (prefRainScale.equals("1")) {
+                                // inches
+                                postFix = "\"";
+                                fSnow = fSnow / new Float(2.54);
+                            }
                             String lessThan = "";
                             if (fSnow < 0.1) {
                                 lessThan = "<";
                                 fSnow = new Float(0.1);
                             }
-                            rain = (char) 0x2746 + " " + lessThan + String.format("%.1f", fSnow) + " mm";
+                            rain = (char) 0x2746 + " " + lessThan + String.format("%.1f", fSnow) + postFix;
                         }
                         forecastView.setTextViewText(R.id.forecast_rain, rain);
 
@@ -209,8 +251,6 @@ public class ForecastWidgetService extends Service {
             CharSequence stationName = ForecastWidgetConfigureActivity.loadPref(context, "stationName", widgetId);
             CharSequence stationCountry = ForecastWidgetConfigureActivity.loadPref(context, "stationCountry", widgetId);
             String stationId = ForecastWidgetConfigureActivity.loadPref(context, "stationId", widgetId);
-            Boolean useCelsius = true;
-            Boolean useFahrenheit = false;
 
             JSONObject forecast = new JSONObject();
             WeatherStationsDatabase weatherStationsDatabase = new WeatherStationsDatabase(context);
@@ -225,7 +265,7 @@ public class ForecastWidgetService extends Service {
             views.setTextViewText(R.id.stationName, stationName);
             views.setTextViewText(R.id.stationCountry, stationCountry);
 
-            processForecasts(context, forecast, views, useCelsius, useFahrenheit);
+            processForecasts(context, forecast, views);
 
             Intent clickIntent = new Intent(context, ForecastWidget.class);
             clickIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
