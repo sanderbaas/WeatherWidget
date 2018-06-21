@@ -107,7 +107,6 @@ public class ForecastWidgetService extends Service {
                 }
 
                 Iterator<String> keys = days.keys();
-                //Integer maxDays = 4;
                 Integer numDays = 0;
                 while (keys.hasNext() && numDays < maxDays) {
                     numDays++;
@@ -122,10 +121,12 @@ public class ForecastWidgetService extends Service {
                     dayLineView.setTextViewText(R.id.day, dayLabel);
                     views.addView(R.id.widgetForecasts, dayLineView);
 
-                    for (int n = 0; n < (8-dayForecasts.length()); n++) {
-                        // add empty forecast
-                        RemoteViews forecastView = new RemoteViews(context.getPackageName(), R.layout.forecast);
-                        views.addView(R.id.widgetForecasts, forecastView);
+                    if (numDays < 2) {
+                        for (int n = 0; n < (8 - dayForecasts.length()); n++) {
+                            // add empty forecast
+                            RemoteViews forecastView = new RemoteViews(context.getPackageName(), R.layout.forecast);
+                            views.addView(R.id.widgetForecasts, forecastView);
+                        }
                     }
 
                     for (int j = 0; j < dayForecasts.length(); j++) {
@@ -227,6 +228,14 @@ public class ForecastWidgetService extends Service {
                         }
 
                         views.addView(R.id.widgetForecasts, forecastView);
+                    }
+
+                    if (numDays > 1) {
+                        for (int n = 0; n < (8 - dayForecasts.length()); n++) {
+                            // add empty forecast
+                            RemoteViews forecastView = new RemoteViews(context.getPackageName(), R.layout.forecast);
+                            views.addView(R.id.widgetForecasts, forecastView);
+                        }
                     }
                 }
             }
