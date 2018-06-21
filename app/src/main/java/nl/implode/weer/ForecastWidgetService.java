@@ -7,8 +7,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -38,7 +40,7 @@ public class ForecastWidgetService extends Service {
         return START_NOT_STICKY;
     }
 
-    private void processForecasts(Context context, JSONObject forecast, RemoteViews views) {
+    private void processForecasts(Context context, JSONObject forecast, Integer maxDays, RemoteViews views) {
         JSONObject days = new JSONObject();
         // rainScale (0 mm, 1 inch)
         // tempScale (0 Celsius, 1 Fahrenheit, 2 Kelvin)
@@ -105,7 +107,7 @@ public class ForecastWidgetService extends Service {
                 }
 
                 Iterator<String> keys = days.keys();
-                Integer maxDays = 4;
+                //Integer maxDays = 4;
                 Integer numDays = 0;
                 while (keys.hasNext() && numDays < maxDays) {
                     numDays++;
@@ -252,6 +254,22 @@ public class ForecastWidgetService extends Service {
             CharSequence stationCountry = ForecastWidgetConfigureActivity.loadPref(context, "stationCountry", widgetId);
             String stationId = ForecastWidgetConfigureActivity.loadPref(context, "stationId", widgetId);
 
+            Bundle options=appWidgetManager.getAppWidgetOptions(widgetId);
+            Integer minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
+            Integer maxHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
+
+            Integer maxDays = 4;
+
+            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+                // portrait: minWidth x maxHeight
+                maxDays = (int) Math.floor((maxHeight-40)/90);
+            }
+
+            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                // landscape: maxWidth x minHeight
+                maxDays = (int) Math.floor((minHeight-40)/90);
+            }
+
             JSONObject forecast = new JSONObject();
             WeatherStationsDatabase weatherStationsDatabase = new WeatherStationsDatabase(context);
             WeatherStation weatherStation = null;
@@ -265,7 +283,7 @@ public class ForecastWidgetService extends Service {
             views.setTextViewText(R.id.stationName, stationName);
             views.setTextViewText(R.id.stationCountry, stationCountry);
 
-            processForecasts(context, forecast, views);
+            processForecasts(context, forecast, maxDays, views);
 
             Intent clickIntent = new Intent(context, ForecastWidget.class);
             clickIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
