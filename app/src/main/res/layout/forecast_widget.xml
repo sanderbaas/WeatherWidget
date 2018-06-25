@@ -45,6 +45,19 @@
         android:layout_margin="4dp"
         android:id="@+id/updateTime"
         android:text="Last update" />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spacer"
+            android:layout_weight="1"
+            android:text="" />
+        <Button
+            android:id="@+id/settings"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/ic_settings_white_18dp"
+            android:text="" />
 
     </LinearLayout>
 

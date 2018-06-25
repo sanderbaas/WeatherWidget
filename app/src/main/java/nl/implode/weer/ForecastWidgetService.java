@@ -299,7 +299,18 @@ public class ForecastWidgetService extends Service {
             clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                     0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            views.setOnClickPendingIntent(R.id.forecast_widget, pendingIntent);
+            views.setOnClickPendingIntent(R.id.widgetForecasts, pendingIntent);
+
+            // Create intent pointing to ConfigurationActivity, in this example we are at ConfigurationActivity
+            Intent configurationIntent = new Intent(context, ForecastWidgetConfigureActivity.class);
+            // Create a extra giving the App Widget Id
+            configurationIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+            // Create a pending intent giving configurationIntent as parameter
+            PendingIntent configurationPendingIntent = PendingIntent.getActivity(context, 0, configurationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            // Here we fecth the layout item and give it a action
+
+            // Setting onClick event that will lauch ConfigurationActivity
+            views.setOnClickPendingIntent(R.id.settings, configurationPendingIntent);
 
             // Instruct the widget manager to update the widget
             appWidgetManager.updateAppWidget(widgetId, views);
