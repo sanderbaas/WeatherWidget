@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class WeatherStationAutoCompleteAdapter extends BaseAdapter implements Filterable {
 
-    private static final int MAX_RESULTS = 10;
+    private static final int MAX_RESULTS = 20;
     private Context mContext;
     private List<WeatherStation> resultList = new ArrayList<WeatherStation>();
 
@@ -50,10 +50,8 @@ public class WeatherStationAutoCompleteAdapter extends BaseAdapter implements Fi
             convertView = inflater.inflate(android.R.layout.simple_dropdown_item_1line, parent, false);
         }
         TextView text1 = (TextView) convertView.findViewById(android.R.id.text1);
-        //TextView text2 = (TextView) convertView.findViewById(android.R.id.text2);
         // Populate the data into the template view using the data object
         text1.setText(getItem(position).name + ", "+getItem(position).country);
-        //text2.setText(String.valueOf(getItem(position)._id));
         return convertView;
     }
 
@@ -91,7 +89,7 @@ public class WeatherStationAutoCompleteAdapter extends BaseAdapter implements Fi
     private List<WeatherStation> findWeatherStations(Context context, String name) {
         WeatherStationsDatabase weatherStationsDatabase = new WeatherStationsDatabase(context);
         SQLiteDatabase db = weatherStationsDatabase.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM cities WHERE name LIKE '%"+name+"%';", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM cities WHERE name LIKE '%"+name+"%' LIMIT 20;", null);
         List<WeatherStation> searchResults = new ArrayList<WeatherStation>();
         try {
             while (cursor.moveToNext()) {

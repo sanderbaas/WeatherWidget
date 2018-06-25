@@ -121,7 +121,8 @@ public class ForecastWidgetConfigureActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 WeatherStation weatherStation = (WeatherStation) adapterView.getItemAtPosition(position);
-                mAppWidgetLocation.setText(weatherStation.name + ", " + weatherStation.country);
+                mAppWidgetLocation.getText().clear();
+                mAppWidgetLocation.append(weatherStation.name + ", " + weatherStation.country);
                 stationName = weatherStation.name;
                 stationCountry = weatherStation.country;
                 stationId = String.valueOf(weatherStation._id);
