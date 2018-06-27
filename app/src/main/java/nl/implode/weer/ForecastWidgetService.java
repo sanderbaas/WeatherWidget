@@ -9,9 +9,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -19,20 +20,13 @@ import android.widget.RemoteViews;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Random;
 
 public class ForecastWidgetService extends Service {
-
-    @Override
-    public void onStart(Intent intent, int startId) {
-        handleStart(intent, startId);
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -40,7 +34,32 @@ public class ForecastWidgetService extends Service {
         return START_NOT_STICKY;
     }
 
-    private void processForecasts(Context context, JSONObject forecast, Integer maxDays, RemoteViews views) {
+    private Context gContext;
+    private AppWidgetManager appWidgetManager;
+
+    private void processForecasts(JSONObject forecast, Integer widgetId) {
+        Integer maxDays = 4;
+        RemoteViews views = new RemoteViews(gContext.getPackageName(), R.layout.forecast_widget);
+        CharSequence stationName = ForecastWidgetConfigureActivity.loadPref(gContext, "stationName", widgetId);
+        CharSequence stationCountry = ForecastWidgetConfigureActivity.loadPref(gContext, "stationCountry", widgetId);
+
+        Bundle options = appWidgetManager.getAppWidgetOptions(widgetId);
+        Integer minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
+        Integer maxHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            // portrait: minWidth x maxHeight
+            maxDays = (int) Math.floor((maxHeight-40)/90);
+        }
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // landscape: maxWidth x minHeight
+            maxDays = (int) Math.floor((minHeight-40)/90);
+        }
+
+        views.setTextViewText(R.id.stationName, stationName);
+        views.setTextViewText(R.id.stationCountry, stationCountry);
+
         JSONObject days = new JSONObject();
         // rainScale (0 mm, 1 inch)
         // tempScale (0 Celsius, 1 Fahrenheit, 2 Kelvin)
@@ -101,7 +120,7 @@ public class ForecastWidgetService extends Service {
 
                 // add times
                 for (int l=0; l<times.length; l++) {
-                    RemoteViews timeView = new RemoteViews(context.getPackageName(), R.layout.times);
+                    RemoteViews timeView = new RemoteViews(gContext.getPackageName(), R.layout.times);
                     timeView.setTextViewText(R.id.time, times[l]);
                     views.addView(R.id.widgetForecasts, timeView);
                 }
@@ -117,14 +136,14 @@ public class ForecastWidgetService extends Service {
                     String dayLabel = sdfDate.format(keyDate.parse(dayName));
                     JSONArray dayForecasts = days.getJSONArray(dayName);
                     // add tablerow with just day name
-                    RemoteViews dayLineView = new RemoteViews(context.getPackageName(), R.layout.day);
+                    RemoteViews dayLineView = new RemoteViews(gContext.getPackageName(), R.layout.day);
                     dayLineView.setTextViewText(R.id.day, dayLabel);
                     views.addView(R.id.widgetForecasts, dayLineView);
 
                     if (numDays < 2) {
                         for (int n = 0; n < (8 - dayForecasts.length()); n++) {
                             // add empty forecast
-                            RemoteViews forecastView = new RemoteViews(context.getPackageName(), R.layout.forecast);
+                            RemoteViews forecastView = new RemoteViews(gContext.getPackageName(), R.layout.forecast);
                             views.addView(R.id.widgetForecasts, forecastView);
                         }
                     }
@@ -143,7 +162,7 @@ public class ForecastWidgetService extends Service {
                             temp = 9/5*(temp - 273.15) + 32;
                         }
 
-                        RemoteViews forecastView = new RemoteViews(context.getPackageName(), R.layout.forecast);
+                        RemoteViews forecastView = new RemoteViews(gContext.getPackageName(), R.layout.forecast);
                         forecastView.setTextViewText(R.id.forecast_temp, String.valueOf(Math.round(temp)) + (char) 0x00B0);
                         if (isFreezing) {
                             forecastView.setTextColor(R.id.forecast_temp, Color.BLUE);
@@ -214,7 +233,7 @@ public class ForecastWidgetService extends Service {
                             if (fDeg >= 247.5 && fDeg < 292.5) { dir = "wind_w"; }
                             if (fDeg >= 292.5 && fDeg < 337.5) { dir = "wind_nw"; }
 
-                            wind = (char) 0x2332 + " " + context.getResources().getString(context.getResources().getIdentifier(dir, "string", context.getPackageName())) + " " + bft;
+                            wind = (char) 0x2332 + " " + gContext.getResources().getString(gContext.getResources().getIdentifier(dir, "string", gContext.getPackageName())) + " " + bft;
 
                         }
                         forecastView.setTextViewText(R.id.forecast_wind, wind);
@@ -223,7 +242,7 @@ public class ForecastWidgetService extends Service {
                             JSONArray weather = dayForecast.getJSONArray("weather");
                             if (weather.getJSONObject(0).has("icon")) {
                                 String icon = "icon" + weather.getJSONObject(0).getString("icon");
-                                forecastView.setImageViewResource(R.id.forecast_icon, context.getResources().getIdentifier(icon, "drawable", context.getPackageName()));
+                                forecastView.setImageViewResource(R.id.forecast_icon, gContext.getResources().getIdentifier(icon, "drawable", gContext.getPackageName()));
                             }
                         }
 
@@ -233,80 +252,30 @@ public class ForecastWidgetService extends Service {
                     if (numDays > 1) {
                         for (int n = 0; n < (8 - dayForecasts.length()); n++) {
                             // add empty forecast
-                            RemoteViews forecastView = new RemoteViews(context.getPackageName(), R.layout.forecast);
+                            RemoteViews forecastView = new RemoteViews(gContext.getPackageName(), R.layout.forecast);
                             views.addView(R.id.widgetForecasts, forecastView);
                         }
                     }
                 }
             }
-        }catch(Exception e) {
-            e.printStackTrace();
-        } finally {
 
-        }
-
-    }
-
-    private void handleStart(Intent intent, int startId) {
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this
-                .getApplicationContext());
-
-        int[] allWidgetIds = intent
-                .getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
-        Context context = this.getApplicationContext();
-
-        ComponentName widgetComponentName = new ComponentName(context, ForecastWidget.class);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widgetComponentName);
-
-        for (int widgetId : allWidgetIds) {
-            CharSequence stationName = ForecastWidgetConfigureActivity.loadPref(context, "stationName", widgetId);
-            CharSequence stationCountry = ForecastWidgetConfigureActivity.loadPref(context, "stationCountry", widgetId);
-            String stationId = ForecastWidgetConfigureActivity.loadPref(context, "stationId", widgetId);
-
-            Bundle options=appWidgetManager.getAppWidgetOptions(widgetId);
-            Integer minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
-            Integer maxHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
-
-            Integer maxDays = 4;
-
-            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-                // portrait: minWidth x maxHeight
-                maxDays = (int) Math.floor((maxHeight-40)/90);
-            }
-
-            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                // landscape: maxWidth x minHeight
-                maxDays = (int) Math.floor((minHeight-40)/90);
-            }
-
-            JSONObject forecast = new JSONObject();
-            WeatherStationsDatabase weatherStationsDatabase = new WeatherStationsDatabase(context);
-            WeatherStation weatherStation = null;
-            if (!stationId.isEmpty()) {
-                weatherStation = weatherStationsDatabase.findWeatherStation(Integer.valueOf(stationId));
-                forecast = weatherStation.get5DayForecast();
-            }
-
-            // Construct the RemoteViews object
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.forecast_widget);
-            views.setTextViewText(R.id.stationName, stationName);
-            views.setTextViewText(R.id.stationCountry, stationCountry);
-
-            processForecasts(context, forecast, maxDays, views);
-
-            Intent clickIntent = new Intent(context, ForecastWidget.class);
+            Intent clickIntent = new Intent(gContext, ForecastWidget.class);
             clickIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            ComponentName widgetComponentName = new ComponentName(gContext, ForecastWidget.class);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widgetComponentName);
             clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(gContext,
                     0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setOnClickPendingIntent(R.id.widgetForecasts, pendingIntent);
 
             // Create intent pointing to ConfigurationActivity, in this example we are at ConfigurationActivity
-            Intent configurationIntent = new Intent(context, ForecastWidgetConfigureActivity.class);
+            Intent configurationIntent = new Intent(gContext, ForecastWidgetConfigureActivity.class);
             // Create a extra giving the App Widget Id
             configurationIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
             // Create a pending intent giving configurationIntent as parameter
-            PendingIntent configurationPendingIntent = PendingIntent.getActivity(context, 0, configurationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent configurationPendingIntent = PendingIntent.getActivity(gContext,
+                    widgetId, configurationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             // Here we fecth the layout item and give it a action
 
             // Setting onClick event that will lauch ConfigurationActivity
@@ -314,6 +283,70 @@ public class ForecastWidgetService extends Service {
 
             // Instruct the widget manager to update the widget
             appWidgetManager.updateAppWidget(widgetId, views);
+        }catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+
+        }
+    }
+
+    public class ForecastHandler extends Handler {
+        private Integer mWidgetId;
+
+        public ForecastHandler(Integer widgetId) {
+            mWidgetId = widgetId;
+        }
+
+        public void handleMessage(Message msg) {
+            Bundle bundle = msg.getData();
+            String jsonForecast = bundle.getString("forecast");
+            JSONObject forecast = new JSONObject();
+            try {
+                forecast = new JSONObject(jsonForecast);
+                processForecasts(forecast, mWidgetId);
+            }catch(Exception e) {
+                Log.d("weer", e.getMessage());
+            }
+        }
+    }
+
+    public class ForecastRunner implements Runnable {
+        private Integer mWidgetId;
+        private ForecastHandler mHandler;
+
+        public ForecastRunner(Integer widgetId, ForecastHandler handler) {
+            mWidgetId = widgetId;
+            mHandler = handler;
+        }
+
+        public void run() {
+            String stationId = ForecastWidgetConfigureActivity.loadPref(gContext, "stationId", mWidgetId);
+            JSONObject forecast = new JSONObject();
+            WeatherStationsDatabase weatherStationsDatabase = new WeatherStationsDatabase(gContext);
+            WeatherStation weatherStation = null;
+            if (!stationId.isEmpty()) {
+                weatherStation = weatherStationsDatabase.findWeatherStation(Integer.valueOf(stationId));
+                forecast = weatherStation.get5DayForecast();
+            }
+            Bundle bundle = new Bundle();
+            bundle.putString("forecast", forecast.toString());
+            Message msg = new Message();
+            msg.setData(bundle);
+            mHandler.sendMessage(msg);
+        }
+    }
+
+    private void handleStart(Intent intent, int startId) {
+        appWidgetManager = AppWidgetManager.getInstance(this
+                .getApplicationContext());
+
+        int[] allWidgetIds = intent
+                .getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+        gContext = this.getApplicationContext();
+
+        for (int widgetId : allWidgetIds) {
+            Thread thread = new Thread(new ForecastRunner(widgetId, new ForecastHandler(widgetId)));
+            thread.start();
         }
         stopSelf();
 
