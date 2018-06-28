@@ -1,0 +1,1 @@
+Voeg één of meer widgets toe aan het startscherm met de weersverwachting van 5 tot 7 dagen voor een bepaalde locatie.
