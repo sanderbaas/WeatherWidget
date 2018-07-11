@@ -1,1 +1,22 @@
-Voeg één of meer widgets toe aan het startscherm met de weersverwachting van 5 tot 7 dagen voor een bepaalde locatie.
+Voeg een of meer widgets toe aan het homescreen met de weersverwachting voor 4 tot 6 dagen in een gekozen
+locatie. Elke dag is verdeeld in blokken van drie uur en de informatie per weersverwachting is als volgt:
+- weer icoon met zonneschijn, wolken en neerslag
+- temperatuur (Kelvin, Celcius of Fahrenheit)
+- windrichting
+- windsnelheid (Beaufort)
+- hoeveelheid regen (mm of inch)
+- hoeveelheid sneeuw (mm of inch)
+
+De bron voor de weersverwachting is OpenWeatherMap en wordt elk half uur ververst of als op een van de widgets
+wordt geklikt. De temperatuur kan worden getoond in een van drie schalen: Kelvin, Celcius of Fahrenheit. De 
+temperatuur wordt blauw weergegeven als het vriest en anders in rood. Regen- en sneeuwverwachting kunnen worden
+getoond in millimeters of inches.
+
+De tijden van de blokken kunnen van de weerlocatie zelf zijn of van de locatie van de telefoon en kunnen worden
+getoond in 24-uur formaat of am/om-formaat.
+
+De minimale grootte van een widget is 4x3 en kan groter zijn. Als de widget groter is kunnen meer verwachtingen
+passen. Het is mogelijk de locatie van een widget te wijzigen nadat deze is toegevoegd door of het tandwiel-icoon
+te klikken.
+
+Deze app is beschikbaar in Nederlands en Engels.

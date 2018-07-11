@@ -1,1 +1,1 @@
-Add widget to home screen with weather 5 to 7 day weather forecast in your location.
+Weather forecast widget, 4 to 6 days in 3 hour blocks of a location.
