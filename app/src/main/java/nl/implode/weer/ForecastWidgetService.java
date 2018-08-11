@@ -159,7 +159,8 @@ public class ForecastWidgetService extends Service {
                         }
                         if (prefTempScale.equals("1")) {
                             // fahrenheit
-                            temp = 9/5*(temp - 273.15) + 32;
+                            Double factor = (double)9/(double)5;
+                            temp = factor * (temp - 273.15) + 32;
                         }
 
                         RemoteViews forecastView = new RemoteViews(gContext.getPackageName(), R.layout.forecast);
