@@ -1,0 +1,20 @@
+Diese App enthält ein Widget mit einer Wettervorhersage für die nächsten 4 bis 6 Tage für auswählbare Orte. Jeder Tag
+ist in mehreren Blöcken mit einem Abstand von jeweils drei Stunden eingeteilt und die Wettervorhersage informiert über:
+- ein Wetter Symbol, welches Sonnenschein, Wolken und Niederschlag anzeigt
+- Temperatur (Kelvin, Celcius oder Fahrenheit)
+- Windrichtung
+- Windgeschwindigkeit (Beaufort)
+- Regenmengen (mm oder Zoll)
+- Schneemengen (mm or Zoll)
+
+Die Informationen stammen von OpenWeatherMap und werden entweder jede halbe Stunde oder wenn ein Widget berührt wird
+aktualisiert. Die Temperatur kann in drei verschiedenen Skalen angezeigt werden: Kelvin, Celcius oder Fahrenheit und wird entweder blau angezeigt,
+wenn die Temperatur unter dem Gefrierpunkt liegt, sonst wird sie rot angezeigt. Regen- und Schneemengen können sowohl in mm als auch in Zoll angegeben werden. waren  temperature is below freezing and red otherwise.
+
+Die Zeit der Blöcke kann entweder die Uhrzeit des ausgweählten Standorts sein, oder die des Standorts vom Telefon.
+Außerdem kann zwischen dem 24-Stunden Format und dem am/pm-Format ausgewählt werden.
+
+Ein Widget hat die Minimalgröße von 4x3 und kann auch größer sein. Wenn ein Widget größer ist, können mehr Vorhersagen angezeigt werdenA widget has a minimal size of 4 x 3 and can be larger. Es ist 
+möglich den Standort zu wechseln, nachdem das Widget hinzugefügt wurde, indem man das Zahnrad Icon berührt.
+
+Diese App ist erhältlich in Englisch, Niederländisch und Deutsch.
