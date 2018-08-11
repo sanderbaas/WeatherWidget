@@ -1,0 +1,1 @@
+Wettervorhersage Widget, 4 bis 6 Tage mit jeweils 3 Stunden Unterschied von einem bestimmten Ort.
