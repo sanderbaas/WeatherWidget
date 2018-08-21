@@ -10,6 +10,9 @@
     <string name="pref_description_use_local_time">Use the time at the location of weather info instead of the time on the device
     </string>
 
+    <string name="pref_title_use_dark_theme">Use dark theme</string>
+    <string name="pref_description_use_dark_theme">Save your battery and use a dark theme instead of the default light theme</string>
+
     <string name="pref_title_time">Time preference</string>
     <string-array name="pref_time_list_titles">
         <item>24h (13:37)</item>

@@ -1,8 +1,10 @@
 package nl.implode.weer;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -23,6 +25,16 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getDelegate().installViewFactory();
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+
+        Boolean prefDarkTheme = sharedPrefs.getBoolean("use_dark_theme", false);
+        Integer theme = R.style.AppTheme;
+        if (prefDarkTheme) {
+            theme = R.style.AppThemeDark;
+        }
+
+        this.setTheme(theme);
         getDelegate().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
     }

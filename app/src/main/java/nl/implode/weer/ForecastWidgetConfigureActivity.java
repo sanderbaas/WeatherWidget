@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.BoolRes;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
@@ -110,6 +111,17 @@ public class ForecastWidgetConfigureActivity extends Activity {
         // Set the result to CANCELED.  This will cause the widget host to cancel
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED);
+
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+
+        Boolean prefDarkTheme = sharedPrefs.getBoolean("use_dark_theme", false);
+        Integer theme = R.style.AppTheme;
+        if (prefDarkTheme) {
+            theme = R.style.AppThemeDark;
+        }
+
+        this.setTheme(theme);
 
         setContentView(R.layout.forecast_widget_configure);
         final DelayAutoCompleteTextView mAppWidgetLocation = (DelayAutoCompleteTextView) findViewById(R.id.appwidget_location);

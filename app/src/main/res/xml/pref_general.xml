@@ -36,4 +36,10 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_rain_scale" />
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="use_dark_theme"
+        android:summary="@string/pref_description_use_dark_theme"
+        android:title="@string/pref_title_use_dark_theme" />
+
 </PreferenceScreen>
