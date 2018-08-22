@@ -25,7 +25,7 @@
         android:id="@+id/forecast_wind"
         android:layout_width="wrap_content"
         android:textSize="7sp"
-        android:textColor="#000"
+        android:textColor="#fff"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content">
     </TextView>
@@ -33,7 +33,7 @@
         android:id="@+id/forecast_rain"
         android:layout_width="wrap_content"
         android:textSize="8sp"
-        android:textColor="#000"
+        android:textColor="#fff"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content">
     </TextView>

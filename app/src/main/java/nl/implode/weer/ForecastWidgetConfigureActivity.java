@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.BoolRes;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -59,6 +58,7 @@ public class ForecastWidgetConfigureActivity extends Activity {
                 // It is the responsibility of the configuration activity to update the app widget
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
                 ForecastWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
+                ForecastWidgetDark.updateAppWidget(context, appWidgetManager, mAppWidgetId);
 
                 // Make sure we pass back the original appWidgetId
                 Intent resultValue = new Intent();

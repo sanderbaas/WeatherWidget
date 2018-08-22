@@ -1,0 +1,77 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/forecast_widget"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#303030"
+    android:padding="@dimen/widget_margin">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="#3f51b5"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:id="@+id/widgetMetaData">
+
+    <TextView
+        android:id="@+id/stationName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#fff"
+        android:text="Location" />
+
+    <TextView
+        android:id="@+id/stationCountry"
+        android:layout_below="@+id/stationName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Country"
+        android:textSize="12sp"
+        android:layout_margin="4dp"
+        android:textColor="#fff"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:textSize="12sp"
+        android:layout_margin="4dp"
+        android:id="@+id/updateTime"
+        android:text="Last update" />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spacer"
+            android:layout_weight="1"
+            android:text="" />
+        <Button
+            android:id="@+id/settings"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/ic_settings_white_18dp"
+            android:text="" />
+
+    </LinearLayout>
+
+    <GridLayout
+        android:id="@+id/widgetForecasts"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/widgetMetaData"
+        android:columnCount="8"
+        android:alignmentMode="alignBounds"
+        android:useDefaultMargins="true"
+        android:layoutDirection="locale"
+        android:rowCount="9">
+    </GridLayout>
+
+</RelativeLayout>

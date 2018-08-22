@@ -40,15 +40,24 @@ import java.util.Set;
  */
 public class ForecastWidget extends AppWidgetProvider {
 
+    static Class widgetClass;
+    static Class widgetServiceClass;
+
+    public ForecastWidget(){
+        widgetClass = ForecastWidget.class;
+        widgetServiceClass = ForecastWidgetService.class;
+    }
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
+
         ComponentName thisWidget = new ComponentName(context,
-                ForecastWidget.class);
+                widgetClass);
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 
         // Build the intent to call the service
         Intent intent = new Intent(context.getApplicationContext(),
-                ForecastWidgetService.class);
+                widgetServiceClass);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
 
         // Update the widgets via the service

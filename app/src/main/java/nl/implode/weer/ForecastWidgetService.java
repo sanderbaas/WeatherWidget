@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 import org.json.JSONArray;
@@ -37,9 +39,30 @@ public class ForecastWidgetService extends Service {
     private Context gContext;
     private AppWidgetManager appWidgetManager;
 
+    protected Class widgetClass;
+
+    public ForecastWidgetService(){
+        this.widgetClass = ForecastWidget.class;
+    }
+
+    private int getLayout(String id) {
+        boolean dark = widgetClass.getName().equals("nl.implode.weer.ForecastWidgetDark");
+        switch(id){
+            case "forecast_widget":
+                return dark ? R.layout.forecast_widget_dark : R.layout.forecast_widget;
+            case "day":
+                return dark ? R.layout.day_dark : R.layout.day;
+            case "forecast":
+                return dark ? R.layout.forecast_dark : R.layout.forecast;
+            case "times":
+                return dark ? R.layout.times_dark : R.layout.times;
+        }
+        return 0;
+    }
+
     private void processForecasts(JSONObject forecast, Integer widgetId) {
         Integer maxDays = 4;
-        RemoteViews views = new RemoteViews(gContext.getPackageName(), R.layout.forecast_widget);
+        RemoteViews views = new RemoteViews(gContext.getPackageName(), getLayout("forecast_widget"));
         CharSequence stationName = ForecastWidgetConfigureActivity.loadPref(gContext, "stationName", widgetId);
         CharSequence stationCountry = ForecastWidgetConfigureActivity.loadPref(gContext, "stationCountry", widgetId);
 
@@ -120,7 +143,7 @@ public class ForecastWidgetService extends Service {
 
                 // add times
                 for (int l=0; l<times.length; l++) {
-                    RemoteViews timeView = new RemoteViews(gContext.getPackageName(), R.layout.times);
+                    RemoteViews timeView = new RemoteViews(gContext.getPackageName(), getLayout("times"));
                     timeView.setTextViewText(R.id.time, times[l]);
                     views.addView(R.id.widgetForecasts, timeView);
                 }
@@ -136,14 +159,14 @@ public class ForecastWidgetService extends Service {
                     String dayLabel = sdfDate.format(keyDate.parse(dayName));
                     JSONArray dayForecasts = days.getJSONArray(dayName);
                     // add tablerow with just day name
-                    RemoteViews dayLineView = new RemoteViews(gContext.getPackageName(), R.layout.day);
+                    RemoteViews dayLineView = new RemoteViews(gContext.getPackageName(), getLayout("day"));
                     dayLineView.setTextViewText(R.id.day, dayLabel);
                     views.addView(R.id.widgetForecasts, dayLineView);
 
                     if (numDays < 2) {
                         for (int n = 0; n < (8 - dayForecasts.length()); n++) {
                             // add empty forecast
-                            RemoteViews forecastView = new RemoteViews(gContext.getPackageName(), R.layout.forecast);
+                            RemoteViews forecastView = new RemoteViews(gContext.getPackageName(), getLayout("forecast"));
                             views.addView(R.id.widgetForecasts, forecastView);
                         }
                     }
@@ -163,13 +186,19 @@ public class ForecastWidgetService extends Service {
                             temp = factor * (temp - 273.15) + 32;
                         }
 
-                        RemoteViews forecastView = new RemoteViews(gContext.getPackageName(), R.layout.forecast);
-                        forecastView.setTextViewText(R.id.forecast_temp, String.valueOf(Math.round(temp)) + (char) 0x00B0);
-                        if (isFreezing) {
-                            forecastView.setTextColor(R.id.forecast_temp, Color.BLUE);
-                        } else {
-                            forecastView.setTextColor(R.id.forecast_temp, Color.RED);
+                        Boolean prefDarkTheme = sharedPrefs.getBoolean("use_dark_theme", false);
+                        Integer theme = R.style.AppTheme;
+                        if (prefDarkTheme) {
+                            theme = R.style.AppThemeDark;
                         }
+
+                        TypedValue a = new TypedValue();
+                        int tempColor = isFreezing ? Color.BLUE : Color.RED;
+
+                        RemoteViews forecastView = new RemoteViews(gContext.getPackageName(), getLayout("forecast"));
+                        forecastView.setTextViewText(R.id.forecast_temp, String.valueOf(Math.round(temp)) + (char) 0x00B0);
+
+                        forecastView.setTextColor(R.id.forecast_temp, tempColor);
                         String rain = "";
                         if (dayForecast.has("rain") && dayForecast.getJSONObject("rain").has("3h")) {
                             String sRain = dayForecast.getJSONObject("rain").getString("3h");
@@ -253,18 +282,21 @@ public class ForecastWidgetService extends Service {
                     if (numDays > 1) {
                         for (int n = 0; n < (8 - dayForecasts.length()); n++) {
                             // add empty forecast
-                            RemoteViews forecastView = new RemoteViews(gContext.getPackageName(), R.layout.forecast);
+                            RemoteViews forecastView = new RemoteViews(gContext.getPackageName(), getLayout("forecast"));
                             views.addView(R.id.widgetForecasts, forecastView);
                         }
                     }
                 }
             }
 
-            Intent clickIntent = new Intent(gContext, ForecastWidget.class);
+            boolean dark = widgetClass.getName().equals("nl.implode.weer.ForecastWidgetDark");
+            String widgetTheme = dark ? "dark" : "light";
+            Intent clickIntent = new Intent(gContext, widgetClass);
             clickIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            ComponentName widgetComponentName = new ComponentName(gContext, ForecastWidget.class);
+            ComponentName widgetComponentName = new ComponentName(gContext, widgetClass);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widgetComponentName);
             clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+            //ForecastWidgetConfigureActivity.savePref(gContext, "widgetTheme", widgetId, widgetTheme);
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(gContext,
                     0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -274,6 +306,7 @@ public class ForecastWidgetService extends Service {
             Intent configurationIntent = new Intent(gContext, ForecastWidgetConfigureActivity.class);
             // Create a extra giving the App Widget Id
             configurationIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+
             // Create a pending intent giving configurationIntent as parameter
             PendingIntent configurationPendingIntent = PendingIntent.getActivity(gContext,
                     widgetId, configurationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
