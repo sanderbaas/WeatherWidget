@@ -56,6 +56,10 @@ public class ForecastWidgetService extends Service {
                 return dark ? R.layout.forecast_dark : R.layout.forecast;
             case "times":
                 return dark ? R.layout.times_dark : R.layout.times;
+            case "color_temp":
+                return dark ? 0xFFe91e63 : Color.RED;
+            case "color_temp_freezing":
+                return dark ? 0xFF7dc6bf : Color.BLUE;
         }
         return 0;
     }
@@ -186,14 +190,7 @@ public class ForecastWidgetService extends Service {
                             temp = factor * (temp - 273.15) + 32;
                         }
 
-                        Boolean prefDarkTheme = sharedPrefs.getBoolean("use_dark_theme", false);
-                        Integer theme = R.style.AppTheme;
-                        if (prefDarkTheme) {
-                            theme = R.style.AppThemeDark;
-                        }
-
-                        TypedValue a = new TypedValue();
-                        int tempColor = isFreezing ? Color.BLUE : Color.RED;
+                        int tempColor = getLayout(isFreezing ? "color_temp_freezing" : "color_temp");
 
                         RemoteViews forecastView = new RemoteViews(gContext.getPackageName(), getLayout("forecast"));
                         forecastView.setTextViewText(R.id.forecast_temp, String.valueOf(Math.round(temp)) + (char) 0x00B0);
@@ -204,6 +201,7 @@ public class ForecastWidgetService extends Service {
                             String sRain = dayForecast.getJSONObject("rain").getString("3h");
                             Float fRain = Float.valueOf(sRain);
                             String postFix = " mm";
+                            //String postFix = " ㎜";
                             if (prefRainScale.equals("1")) {
                                 // inches
                                 postFix = "\"";
@@ -219,7 +217,7 @@ public class ForecastWidgetService extends Service {
                         if (dayForecast.has("snow") && dayForecast.getJSONObject("snow").has("3h")) {
                             String sSnow = dayForecast.getJSONObject("snow").getString("3h");
                             Float fSnow = Float.valueOf(sSnow);
-                            String postFix = " mm";
+                            String postFix = "mm";
                             if (prefRainScale.equals("1")) {
                                 // inches
                                 postFix = "\"";
@@ -230,7 +228,7 @@ public class ForecastWidgetService extends Service {
                                 lessThan = "<";
                                 fSnow = new Float(0.1);
                             }
-                            rain = (char) 0x2746 + " " + lessThan + String.format("%.1f", fSnow) + postFix;
+                            rain = lessThan + String.format("%.1f", fSnow) + postFix;
                         }
                         forecastView.setTextViewText(R.id.forecast_rain, rain);
 
