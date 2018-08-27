@@ -1,0 +1,5 @@
+Changes in version 1.2.0
+
+- add German translation
+- add privacy statement
+- add more information to README
