@@ -59,7 +59,7 @@ public class ForecastWidgetService extends Service {
             case "color_temp":
                 return dark ? 0xFFe91e63 : Color.RED;
             case "color_temp_freezing":
-                return dark ? 0xFF7dc6bf : Color.BLUE;
+                return dark ? 0xFF7dc6bf : 0xFF3F51B5;
         }
         return 0;
     }
