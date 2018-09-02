@@ -294,7 +294,6 @@ public class ForecastWidgetService extends Service {
             ComponentName widgetComponentName = new ComponentName(gContext, widgetClass);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widgetComponentName);
             clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-            //ForecastWidgetConfigureActivity.savePref(gContext, "widgetTheme", widgetId, widgetTheme);
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(gContext,
                     0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
