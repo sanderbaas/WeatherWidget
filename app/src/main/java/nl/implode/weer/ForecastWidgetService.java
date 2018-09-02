@@ -64,6 +64,36 @@ public class ForecastWidgetService extends Service {
         return 0;
     }
 
+    private String getIconImage(String iconCode) {
+        switch(iconCode) {
+            case "01d": return "icon_32";
+            case "02d": return "icon_30";
+            case "03d": return "icon_28";
+            case "04d": return "icon_26";
+            case "09d": return "icon_12";
+            case "10d": return "icon_39";
+            case "11d": return "icon_37";
+            case "13d": return "icon_41";
+            case "50d": return "icon_20";
+
+            case "01n": return "icon_31";
+            case "02n": return "icon_33";
+            case "03n": return "icon_27";
+            case "04n": return "icon_26";
+            case "09n": return "icon_12";
+            case "10n": return "icon_45";
+            case "11n": return "icon_47";
+            case "13n": return "icon_46";
+            case "50n": return "icon_20";
+
+            case "r":  return "icon_12";
+            case "sn50": return "icon_14";
+            case "t50":  return "icon_35";
+            case "w50":  return "icon_23";
+        }
+        return "";
+    }
+
     private void processForecasts(JSONObject forecast, Integer widgetId) {
         Integer maxDays = 4;
         RemoteViews views = new RemoteViews(gContext.getPackageName(), getLayout("forecast_widget"));
@@ -269,7 +299,8 @@ public class ForecastWidgetService extends Service {
                         if (dayForecast.has("weather") && dayForecast.getJSONArray("weather").length()>0) {
                             JSONArray weather = dayForecast.getJSONArray("weather");
                             if (weather.getJSONObject(0).has("icon")) {
-                                String icon = "icon" + weather.getJSONObject(0).getString("icon");
+                                String iconCode = weather.getJSONObject(0).getString("icon");
+                                String icon = getIconImage(iconCode);
                                 forecastView.setImageViewResource(R.id.forecast_icon, gContext.getResources().getIdentifier(icon, "drawable", gContext.getPackageName()));
                             }
                         }
