@@ -21,6 +21,8 @@ possible to change the location after adding a widget by tapping the gear icon.
 
 This app is available in English, Dutch and German.
 
+Weather icons thanks to (MerlinTheRed)[https://www.deviantart.com/merlinthered/art/plain-weather-icons-157162192]
+
 ## Screenshots
 
 ### Home screen widget
