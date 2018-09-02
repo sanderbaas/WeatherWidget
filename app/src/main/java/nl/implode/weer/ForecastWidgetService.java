@@ -200,8 +200,7 @@ public class ForecastWidgetService extends Service {
                         if (dayForecast.has("rain") && dayForecast.getJSONObject("rain").has("3h")) {
                             String sRain = dayForecast.getJSONObject("rain").getString("3h");
                             Float fRain = Float.valueOf(sRain);
-                            String postFix = " mm";
-                            //String postFix = " ㎜";
+                            String postFix = " ㎜";
                             if (prefRainScale.equals("1")) {
                                 // inches
                                 postFix = "\"";
@@ -214,10 +213,11 @@ public class ForecastWidgetService extends Service {
                             }
                             rain = lessThan + String.format("%.1f", fRain) + postFix;
                         }
+
                         if (dayForecast.has("snow") && dayForecast.getJSONObject("snow").has("3h")) {
                             String sSnow = dayForecast.getJSONObject("snow").getString("3h");
                             Float fSnow = Float.valueOf(sSnow);
-                            String postFix = "mm";
+                            String postFix = " ㎜";
                             if (prefRainScale.equals("1")) {
                                 // inches
                                 postFix = "\"";
