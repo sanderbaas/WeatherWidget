@@ -13,10 +13,12 @@ import android.util.Log;
  * App Widget Configuration implemented in {@link ForecastWidgetConfigureActivity ForecastWidgetConfigureActivity}
  */
 public class ForecastWidgetDark extends ForecastWidget {
-    public ForecastWidgetDark(){
-        Log.d("weather","dark widget contrstur");
-        widgetClass = ForecastWidgetDark.class;
-        widgetServiceClass = ForecastWidgetDarkService.class;
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+                                int appWidgetId) {
+        doAppWidgetUpdate(context, appWidgetManager, appWidgetId,
+                ForecastWidgetDark.class, ForecastWidgetDarkService.class);
     }
+
+
 }
 

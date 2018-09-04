@@ -39,25 +39,21 @@ import java.util.Set;
  * App Widget Configuration implemented in {@link ForecastWidgetConfigureActivity ForecastWidgetConfigureActivity}
  */
 public class ForecastWidget extends AppWidgetProvider {
-
-    static Class widgetClass;
-    static Class widgetServiceClass;
-
-    public ForecastWidget(){
-        widgetClass = ForecastWidget.class;
-        widgetServiceClass = ForecastWidgetService.class;
-    }
-
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        ComponentName thisWidget = new ComponentName(context,
-                widgetClass);
+        doAppWidgetUpdate(context, appWidgetManager, appWidgetId,
+                ForecastWidget.class, ForecastWidgetService.class);
+    }
+
+    static void doAppWidgetUpdate(Context context, AppWidgetManager appWidgetManager,
+                                  int appWidgetId, Class widgetClass, Class widgetServiceClass) {
+
+        ComponentName thisWidget = new ComponentName(context, widgetClass);
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 
         // Build the intent to call the service
-        Intent intent = new Intent(context.getApplicationContext(),
-                widgetServiceClass);
+        Intent intent = new Intent(context.getApplicationContext(), widgetServiceClass);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
 
         // Update the widgets via the service
