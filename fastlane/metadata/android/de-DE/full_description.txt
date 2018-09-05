@@ -7,6 +7,8 @@ ist in mehreren Blöcken mit einem Abstand von jeweils drei Stunden eingeteilt u
 - Regenmengen (mm oder Zoll)
 - Schneemengen (mm or Zoll)
 
+Widgets sind in einer hellen und dunklen Option verfügbar.
+
 Die Informationen stammen von OpenWeatherMap und werden entweder jede halbe Stunde oder wenn ein Widget berührt wird
 aktualisiert. Die Temperatur kann in drei verschiedenen Skalen angezeigt werden: Kelvin, Celcius oder Fahrenheit und wird entweder blau angezeigt,
 wenn die Temperatur unter dem Gefrierpunkt liegt, sonst wird sie rot angezeigt. Regen- und Schneemengen können sowohl in mm als auch in Zoll angegeben werden.

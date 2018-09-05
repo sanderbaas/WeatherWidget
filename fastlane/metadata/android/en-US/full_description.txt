@@ -7,6 +7,8 @@ is split into blocks of three hours and the information included in each forecas
 - amount of rain (mm or inch)
 - amount of snow (mm or inch)
 
+Widgets are available in a light and dark option.
+
 The source of the forecasts is OpenWeatherMap and is refreshed every half hour or when one of the widgets is
 tapped. Temperature can be displayed in one of three scales: Kelvin, Celcius or Farenheit and is shown in blue
 when temperature is below freezing and red otherwise. Rain and snow forecasts can be displayed in mm or inches.

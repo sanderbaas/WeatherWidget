@@ -7,6 +7,8 @@ locatie. Elke dag is verdeeld in blokken van drie uur en de informatie per weers
 - hoeveelheid regen (mm of inch)
 - hoeveelheid sneeuw (mm of inch)
 
+Widgets zijn beschikbaar in een licht en donkere variant.
+
 De bron voor de weersverwachting is OpenWeatherMap en wordt elk half uur ververst of als op een van de widgets
 wordt geklikt. De temperatuur kan worden getoond in een van drie schalen: Kelvin, Celcius of Fahrenheit. De 
 temperatuur wordt blauw weergegeven als het vriest en anders in rood. Regen- en sneeuwverwachting kunnen worden
