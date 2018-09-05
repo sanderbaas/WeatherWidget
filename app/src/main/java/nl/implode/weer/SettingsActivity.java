@@ -4,7 +4,9 @@ package nl.implode.weer;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -18,9 +20,12 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 
 import java.util.List;
+
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -89,8 +94,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // Trigger the listener immediately with the preference's
         // current value.
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
+                getDefaultSharedPreferences(preference.getContext())
                         .getString(preference.getKey(), ""));
     }
 
@@ -125,7 +129,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.pref_headers, target);
+        int headerFile = R.xml.pref_headers;
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean prefDarkTheme = sharedPrefs.getBoolean("use_dark_theme", false);
+
+        if (prefDarkTheme) {
+            headerFile = R.xml.pref_headers_dark;
+        }
+        loadHeadersFromResource(headerFile, target);
     }
 
     /**
