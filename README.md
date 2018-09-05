@@ -26,10 +26,13 @@ Weather icons thanks to (MerlinTheRed)[https://www.deviantart.com/merlinthered/a
 ## Screenshots
 
 ### Home screen widget
-![alt text](https://github.com/sanderbaas/WeatherWidget/raw/master/fastlane/metadata/android/en-US/phoneScreenshots/widget.png "Home screen widget")
+![alt text](fastlane/metadata/android/en-US/phoneScreenshots/1-widget-4x4-light.png "Home screen widget")
+![alt text](fastlane/metadata/android/en-US/phoneScreenshots/2-widget-4x4-dark.png "Dark home screen widget")
 
 ### Config screen of widget
-![alt text](https://github.com/sanderbaas/WeatherWidget/raw/master/fastlane/metadata/android/en-US/phoneScreenshots/widget-config.png "Config screen of widget")
+![alt text](fastlane/metadata/android/en-US/phoneScreenshots/3-widget-search-light.png "Config screen of widget")
 
 ### Settings screen of app
-![alt text](https://github.com/sanderbaas/WeatherWidget/raw/master/fastlane/metadata/android/en-US/phoneScreenshots/settings.png "Settings screen of app")
+![alt text](fastlane/metadata/android/en-US/phoneScreenshots/5-settings2-light.png "Settings screen of app")
+![alt text](fastlane/metadata/android/en-US/phoneScreenshots/6-settings2-dark.png "Dark theme settings screen of app")
+
