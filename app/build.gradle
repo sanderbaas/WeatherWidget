@@ -3,6 +3,9 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 23
 
+    lintOptions {
+        abortOnError false
+    }
     defaultConfig {
         applicationId "nl.implode.weer"
         minSdkVersion 23
