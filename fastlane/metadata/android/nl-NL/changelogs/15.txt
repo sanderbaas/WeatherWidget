@@ -1,0 +1,2 @@
+- probleem gerepareerd waarbij donkere widgets niet ververst konden worden
+- het graden symbool bij kelvin temperaturen is vervangen door een 'K'
