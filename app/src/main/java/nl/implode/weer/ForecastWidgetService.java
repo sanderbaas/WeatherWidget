@@ -210,6 +210,7 @@ public class ForecastWidgetService extends Service {
                         Double temp = Double.valueOf(dayForecast.getJSONObject("main").getString("temp"));
                         Boolean isFreezing = temp < 273.15;
 
+                        String tempSuffix = "" + (char) 0x00B0;
                         if (prefTempScale.equals("0")) {
                             // celsius
                             temp = temp - 273.15;
@@ -219,11 +220,15 @@ public class ForecastWidgetService extends Service {
                             Double factor = (double)9/(double)5;
                             temp = factor * (temp - 273.15) + 32;
                         }
+                        if (prefTempScale.equals("2")) {
+                            // kelvin
+                            tempSuffix = "" + (char) 0x004B;
+                        }
 
                         int tempColor = getLayout(isFreezing ? "color_temp_freezing" : "color_temp");
 
                         RemoteViews forecastView = new RemoteViews(gContext.getPackageName(), getLayout("forecast"));
-                        forecastView.setTextViewText(R.id.forecast_temp, String.valueOf(Math.round(temp)) + (char) 0x00B0);
+                        forecastView.setTextViewText(R.id.forecast_temp, String.valueOf(Math.round(temp)) + tempSuffix);
 
                         forecastView.setTextColor(R.id.forecast_temp, tempColor);
                         String rain = "";
