@@ -14,9 +14,10 @@ import android.os.Bundle;
 public class ForecastWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
-
         doAppWidgetUpdate(context, appWidgetManager, appWidgetId,
                 ForecastWidget.class, ForecastWidgetService.class);
+        doAppWidgetUpdate(context, appWidgetManager, appWidgetId,
+                ForecastWidgetDark.class, ForecastWidgetDarkService.class);
     }
 
     static void doAppWidgetUpdate(Context context, AppWidgetManager appWidgetManager,
