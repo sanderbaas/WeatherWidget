@@ -1,0 +1,2 @@
+- fixed problem where dark widget could not be refreshed
+- replaced degrees sign for kelvin temperatures with 'K'
