@@ -52,7 +52,7 @@ public class WeatherStation {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        String apiEntryPoint = "http://api.openweathermap.org/data/2.5/forecast?";
+        String apiEntryPoint = "https://api.openweathermap.org/data/2.5/forecast?";
         String appId = "fbc3d19917801786e46dbacd55d2ee9c";
         Integer maxResults = 10;
 
