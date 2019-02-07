@@ -1,0 +1,2 @@
+- now using https to connect with openweathermap
+- added support for older devices

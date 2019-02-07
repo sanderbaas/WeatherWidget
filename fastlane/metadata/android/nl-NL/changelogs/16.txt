@@ -1,0 +1,2 @@
+- we gebruiken nu https om naar openweathermap te verbinden
+- ondersteuning ingebouwd voor iets oudere apparaten
