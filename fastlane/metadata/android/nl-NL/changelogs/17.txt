@@ -1,0 +1,1 @@
+- fix updaten vanaf versie 1.3.2, negeer versie 1.3.3
