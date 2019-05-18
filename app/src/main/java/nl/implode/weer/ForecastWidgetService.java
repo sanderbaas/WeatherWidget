@@ -27,6 +27,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.TimeZone;
+
+import com.skedgo.converter.TimezoneMapper;
 
 public class ForecastWidgetService extends Service {
 
@@ -124,11 +127,18 @@ public class ForecastWidgetService extends Service {
         SharedPreferences sharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this);
 
+        Boolean useLocalTime = sharedPrefs.getBoolean("use_local_time", false);
         String prefTime = sharedPrefs.getString("time", "0");
         String prefTempScale = sharedPrefs.getString("temp_scale", "0");
         String prefRainScale = sharedPrefs.getString("rain_scale", "0");
+        String timeZone = "";
 
         try {
+            if (forecast.has("city") && forecast.getJSONObject("city").has("coord")) {
+                Double lat = forecast.getJSONObject("city").getJSONObject("coord").getDouble("lat");
+                Double lon = forecast.getJSONObject("city").getJSONObject("coord").getDouble("lon");
+                timeZone = TimezoneMapper.latLngToTimezoneString(lat, lon);
+            }
             //only update view when we have new forecast data, preventing empty results
             if (forecast.has("list") && forecast.getJSONArray("list").length() > 0) {
                 Calendar cal = Calendar.getInstance();
@@ -151,6 +161,9 @@ public class ForecastWidgetService extends Service {
                 for (int i = 0; i < list.length(); i++) {
                     cal.setTimeInMillis(list.getJSONObject(i).getInt("dt") * 1000L);
                     SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
+                    if (useLocalTime) {
+                        sdfDate.setTimeZone(TimeZone.getTimeZone(timeZone));
+                    }
                     String day = sdfDate.format(cal.getTime());
                     if (!days.has(day)) {
                         dayNum++;
@@ -161,6 +174,9 @@ public class ForecastWidgetService extends Service {
                         SimpleDateFormat sdfTime = new SimpleDateFormat("H:mm");
                         if (prefTime.equals("1")) {
                             sdfTime = new SimpleDateFormat("K:mma");
+                        }
+                        if (useLocalTime) {
+                            sdfTime.setTimeZone(TimeZone.getTimeZone(timeZone));
                         }
                         String time = sdfTime.format(cal.getTime());
                         time = time.replace("a.m.","").replace("p.m.","p");
