@@ -1,22 +1,20 @@
 package nl.implode.weer;
 
 import android.app.PendingIntent;
-import android.app.Service;
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
 import android.util.Log;
-import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 import org.json.JSONArray;
@@ -31,25 +29,25 @@ import java.util.TimeZone;
 
 import com.skedgo.converter.TimezoneMapper;
 
-public class ForecastWidgetService extends Service {
+public class ForecastWidgetService extends JobIntentService {
+
+    public static final int JOB_ID = 1;
+
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, ForecastWidgetService.class, JOB_ID, work);
+    }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        handleStart(intent, startId);
-        return START_NOT_STICKY;
+    protected void onHandleWork(@NonNull Intent intent) {
+        handleStart(intent);
     }
 
     private Context gContext;
     private AppWidgetManager appWidgetManager;
 
-    protected Class widgetClass;
-
-    public ForecastWidgetService(){
-        this.widgetClass = ForecastWidget.class;
-    }
+    protected boolean dark;
 
     private int getLayout(String id) {
-        boolean dark = widgetClass.getName().equals("nl.implode.weer.ForecastWidgetDark");
         switch(id){
             case "forecast_widget":
                 return dark ? R.layout.forecast_widget_dark : R.layout.forecast_widget;
@@ -99,6 +97,8 @@ public class ForecastWidgetService extends Service {
 
     private void processForecasts(JSONObject forecast, Integer widgetId) {
         Integer maxDays = 4;
+        String widgetStyle = ForecastWidgetConfigureActivity.loadPref(gContext, "widgetStyle", widgetId);
+        dark = widgetStyle == "dark";
         RemoteViews views = new RemoteViews(gContext.getPackageName(), getLayout("forecast_widget"));
         CharSequence stationName = ForecastWidgetConfigureActivity.loadPref(gContext, "stationName", widgetId);
         CharSequence stationCountry = ForecastWidgetConfigureActivity.loadPref(gContext, "stationCountry", widgetId);
@@ -339,20 +339,18 @@ public class ForecastWidgetService extends Service {
                 }
             }
 
-            boolean dark = widgetClass.getName().equals("nl.implode.weer.ForecastWidgetDark");
-            String widgetTheme = dark ? "dark" : "light";
-            Intent clickIntent = new Intent(gContext, widgetClass);
+            Intent clickIntent = new Intent(gContext, ForecastWidget.class);
             clickIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            ComponentName widgetComponentName = new ComponentName(gContext, widgetClass);
-            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widgetComponentName);
+
+            int[] appWidgetIds = new int[] {widgetId};
             clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(gContext,
-                    0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    widgetId, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setOnClickPendingIntent(R.id.widgetForecasts, pendingIntent);
 
-            // Create intent pointing to ConfigurationActivity, in this example we are at ConfigurationActivity
             Intent configurationIntent = new Intent(gContext, ForecastWidgetConfigureActivity.class);
+
             // Create a extra giving the App Widget Id
             configurationIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
 
@@ -373,53 +371,7 @@ public class ForecastWidgetService extends Service {
         }
     }
 
-    public class ForecastHandler extends Handler {
-        private Integer mWidgetId;
-
-        public ForecastHandler(Integer widgetId) {
-            mWidgetId = widgetId;
-        }
-
-        public void handleMessage(Message msg) {
-            Bundle bundle = msg.getData();
-            String jsonForecast = bundle.getString("forecast");
-            JSONObject forecast = new JSONObject();
-            try {
-                forecast = new JSONObject(jsonForecast);
-                processForecasts(forecast, mWidgetId);
-            }catch(Exception e) {
-                Log.d("weer", e.getMessage());
-            }
-        }
-    }
-
-    public class ForecastRunner implements Runnable {
-        private Integer mWidgetId;
-        private ForecastHandler mHandler;
-
-        public ForecastRunner(Integer widgetId, ForecastHandler handler) {
-            mWidgetId = widgetId;
-            mHandler = handler;
-        }
-
-        public void run() {
-            String stationId = ForecastWidgetConfigureActivity.loadPref(gContext, "stationId", mWidgetId);
-            JSONObject forecast = new JSONObject();
-            WeatherStationsDatabase weatherStationsDatabase = new WeatherStationsDatabase(gContext);
-            WeatherStation weatherStation = null;
-            if (!stationId.isEmpty()) {
-                weatherStation = weatherStationsDatabase.findWeatherStation(Integer.valueOf(stationId));
-                forecast = weatherStation.get5DayForecast();
-            }
-            Bundle bundle = new Bundle();
-            bundle.putString("forecast", forecast.toString());
-            Message msg = new Message();
-            msg.setData(bundle);
-            mHandler.sendMessage(msg);
-        }
-    }
-
-    private void handleStart(Intent intent, int startId) {
+    private void handleStart(Intent intent) {
         appWidgetManager = AppWidgetManager.getInstance(this
                 .getApplicationContext());
 
@@ -427,18 +379,46 @@ public class ForecastWidgetService extends Service {
                 .getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
         gContext = this.getApplicationContext();
 
-        for (int widgetId : allWidgetIds) {
-            Thread thread = new Thread(new ForecastRunner(widgetId, new ForecastHandler(widgetId)));
-            thread.start();
+        for (final int widgetId : allWidgetIds) {
+            final String stationId = ForecastWidgetConfigureActivity.loadPref(gContext, "stationId", widgetId);
+            new Thread() {
+                public void run() {
+                    Looper.prepare();
+                    JSONObject forecast = new JSONObject();
+                    WeatherStationsDatabase weatherStationsDatabase = new WeatherStationsDatabase(gContext);
+                    WeatherStation weatherStation = null;
+                    if (!stationId.isEmpty()) {
+                        weatherStation = weatherStationsDatabase.findWeatherStation(Integer.valueOf(stationId));
+                        forecast = weatherStation.get5DayForecast();
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putString("forecast", forecast.toString());
+                    bundle.putInt("widgetId", widgetId);
+                    Message msg = new Message();
+                    msg.setData(bundle);
+
+                    Handler mHandler = new Handler(new Handler.Callback() {
+
+                        @Override
+                        public boolean handleMessage(Message msg) {
+                            Bundle bundle = msg.getData();
+                            String jsonForecast = bundle.getString("forecast");
+                            Integer mWidgetId = bundle.getInt("widgetId");
+                            JSONObject forecast;
+                            try {
+                                forecast = new JSONObject(jsonForecast);
+                                processForecasts(forecast, mWidgetId);
+                            }catch(Exception e) {
+                                Log.d("weer", e.getMessage());
+                            }
+                            return false;
+                        }
+                    });
+                    mHandler.sendMessage(msg);
+                    Looper.loop();
+                }
+            }.start();
         }
         stopSelf();
-
-        super.onStart(intent, startId);
-    }
-
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 }

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
@@ -26,6 +27,8 @@ public class ForecastWidgetConfigureActivity extends Activity {
     String stationName;
     String stationCountry;
 
+    protected boolean darkWidget;
+
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             final Context context = ForecastWidgetConfigureActivity.this;
@@ -35,11 +38,11 @@ public class ForecastWidgetConfigureActivity extends Activity {
                 savePref(context, "stationName", mAppWidgetId, stationName);
                 savePref(context, "stationCountry", mAppWidgetId, stationCountry);
                 savePref(context, "stationId", mAppWidgetId, stationId);
+                savePref(context, "widgetStyle", mAppWidgetId, darkWidget?"dark":"light");
 
                 // It is the responsibility of the configuration activity to update the app widget
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
                 ForecastWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
-                ForecastWidgetDark.updateAppWidget(context, appWidgetManager, mAppWidgetId);
 
                 // Make sure we pass back the original appWidgetId
                 Intent resultValue = new Intent();
@@ -58,6 +61,7 @@ public class ForecastWidgetConfigureActivity extends Activity {
 
     public ForecastWidgetConfigureActivity() {
         super();
+        this.darkWidget = false;
     }
 
     // Write the prefix to the SharedPreferences object for this widget

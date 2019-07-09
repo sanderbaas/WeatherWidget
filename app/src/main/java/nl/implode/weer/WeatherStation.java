@@ -40,8 +40,6 @@ public class WeatherStation {
             this.country = object.getString("country");
             this.longitude = "0";
             this.latitude = "0";
-            //this.latitude = String.valueOf(object.getJSONObject("coords").getDouble("lat"));
-            //this.longitude = String.valueOf(object.getJSONObject("coords").getDouble("lon"));
         } catch (JSONException e) {
             e.printStackTrace();
         }

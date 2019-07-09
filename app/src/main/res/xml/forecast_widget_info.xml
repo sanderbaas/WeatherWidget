@@ -8,4 +8,4 @@
     android:previewImage="@drawable/forecastwidget_preview"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
-    android:widgetCategory="home_screen|keyguard"></appwidget-provider>
+    android:widgetCategory="home_screen|keyguard" />

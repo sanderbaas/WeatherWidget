@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="nl.implode.weer.ForecastWidgetConfigureActivity"
+    android:configure="nl.implode.weer.ForecastWidgetDarkConfigureActivity"
     android:initialKeyguardLayout="@layout/forecast_widget_dark"
     android:initialLayout="@layout/forecast_widget_dark"
     android:minHeight="250dp"
@@ -8,4 +8,4 @@
     android:previewImage="@drawable/forecastwidget_dark_preview"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
-    android:widgetCategory="home_screen|keyguard"></appwidget-provider>
+    android:widgetCategory="home_screen|keyguard" />

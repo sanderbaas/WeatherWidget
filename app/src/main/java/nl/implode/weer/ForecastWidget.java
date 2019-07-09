@@ -6,6 +6,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
+import static nl.implode.weer.ForecastWidgetService.enqueueWork;
 
 /**
  * Implementation of App Widget functionality.
@@ -14,24 +17,14 @@ import android.os.Bundle;
 public class ForecastWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
-        doAppWidgetUpdate(context, appWidgetManager, appWidgetId,
-                ForecastWidget.class, ForecastWidgetService.class);
-        doAppWidgetUpdate(context, appWidgetManager, appWidgetId,
-                ForecastWidgetDark.class, ForecastWidgetDarkService.class);
-    }
-
-    static void doAppWidgetUpdate(Context context, AppWidgetManager appWidgetManager,
-                                  int appWidgetId, Class widgetClass, Class widgetServiceClass) {
-
-        ComponentName thisWidget = new ComponentName(context, widgetClass);
-        int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+        int[] allWidgetIds = new int[] {appWidgetId};
 
         // Build the intent to call the service
-        Intent intent = new Intent(context.getApplicationContext(), widgetServiceClass);
+        Intent intent = new Intent(context.getApplicationContext(), ForecastWidgetService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
 
         // Update the widgets via the service
-        context.startService(intent);
+        ForecastWidgetService.enqueueWork(context, intent);
     }
 
     @Override
@@ -55,6 +48,7 @@ public class ForecastWidget extends AppWidgetProvider {
             ForecastWidgetConfigureActivity.deletePref(context, "stationName", appWidgetId);
             ForecastWidgetConfigureActivity.deletePref(context, "stationCountry", appWidgetId);
             ForecastWidgetConfigureActivity.deletePref(context, "stationId", appWidgetId);
+            ForecastWidgetConfigureActivity.deletePref(context, "widgetStyle", appWidgetId);
         }
     }
 
