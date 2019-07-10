@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/_4sdp"
     android:layout_marginTop="@dimen/_4sdp"
-    android:textSize="11sp"
+    android:textSize="@dimen/_7sdp"
     android:textColor="#fff"
     android:text="0:00"
     android:id="@+id/time" />
