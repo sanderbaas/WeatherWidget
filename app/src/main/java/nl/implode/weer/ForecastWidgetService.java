@@ -97,8 +97,8 @@ public class ForecastWidgetService extends JobIntentService {
 
     private void processForecasts(JSONObject forecast, Integer widgetId) {
         Integer maxDays = 4;
-        String widgetStyle = ForecastWidgetConfigureActivity.loadPref(gContext, "widgetStyle", widgetId);
-        dark = widgetStyle == "dark";
+        CharSequence widgetStyle = ForecastWidgetConfigureActivity.loadPref(gContext, "widgetStyle", widgetId);
+        dark = widgetStyle.equals("dark");
         RemoteViews views = new RemoteViews(gContext.getPackageName(), getLayout("forecast_widget"));
         CharSequence stationName = ForecastWidgetConfigureActivity.loadPref(gContext, "stationName", widgetId);
         CharSequence stationCountry = ForecastWidgetConfigureActivity.loadPref(gContext, "stationCountry", widgetId);
