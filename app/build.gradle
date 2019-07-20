@@ -10,8 +10,8 @@ android {
         applicationId "nl.implode.weer"
         minSdkVersion 22
         targetSdkVersion 27
-        versionCode 19
-        versionName "1.4.0"
+        versionCode 20
+        versionName "1.4.1"
         setProperty("archivesBaseName", "weather-$versionName")
     }
     buildTypes {
