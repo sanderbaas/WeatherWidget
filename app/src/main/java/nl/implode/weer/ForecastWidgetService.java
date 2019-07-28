@@ -349,7 +349,11 @@ public class ForecastWidgetService extends JobIntentService {
                     widgetId, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setOnClickPendingIntent(R.id.widgetForecasts, pendingIntent);
 
-            Intent configurationIntent = new Intent(gContext, ForecastWidgetConfigureActivity.class);
+            Class configurationClass = ForecastWidgetConfigureActivity.class;
+            if (dark) {
+                configurationClass = ForecastWidgetDarkConfigureActivity.class;
+            }
+            Intent configurationIntent = new Intent(gContext, configurationClass);
 
             // Create a extra giving the App Widget Id
             configurationIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
