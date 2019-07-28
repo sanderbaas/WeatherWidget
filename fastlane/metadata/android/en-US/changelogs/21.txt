@@ -1,0 +1,1 @@
+- fix bug where dark widget turned light when changing weather location

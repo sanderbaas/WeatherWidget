@@ -1,0 +1,1 @@
+- bug gerepareerd waar donkere widget licht werd bij het wijzigen van de weerlocatie
