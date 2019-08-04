@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">Weather</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- General settings -->
+    <string name="pref_header_general">常规设置</string>
+
+    <string name="pref_title_use_local_time">使用本地时间而不是设备时间</string>
+    <string name="pref_description_use_local_time">使用天气信息位置的时间而不是设备时间
+    </string>
+
+    <string name="pref_title_use_dark_theme">使用黑暗主题</string>
+    <string name="pref_description_use_dark_theme">使用黑暗主题并节省电量</string>
+
+    <string name="pref_title_time">时间偏好</string>
+    <string-array name="pref_time_list_titles">
+        <item>24h (13:37)</item>
+        <item>am/pm (1:37pm)</item>
+    </string-array>
+    <string-array name="pref_time_list_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="pref_title_temp_scale">温度单位</string>
+    <string-array name="pref_temp_scale_list_titles">
+        <item>摄氏</item>
+        <item>华氏</item>
+        <item>开</item>
+    </string-array>
+    <string-array name="pref_temp_scale_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="pref_title_rain_scale">降水单位</string>
+    <string-array name="pref_rain_scale_list_titles">
+        <item>毫米</item>
+        <item>英寸</item>
+    </string-array>
+    <string-array name="pref_rain_scale_list_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="location">设置一个位置</string>
+    <string name="add_widget">添加小部件</string>
+
+    <string name="wind_n">北</string>
+    <string name="wind_ne">东北</string>
+    <string name="wind_nw">西北</string>
+    <string name="wind_s">南</string>
+    <string name="wind_se">东南</string>
+    <string name="wind_sw">西南</string>
+    <string name="wind_e">东</string>
+    <string name="wind_w">西</string>
+</resources>
