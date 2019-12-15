@@ -1,12 +1,17 @@
 package nl.implode.weer;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Paint;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -47,11 +52,29 @@ public class WeatherStationAutoCompleteAdapter extends BaseAdapter implements Fi
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(android.R.layout.simple_dropdown_item_1line, parent, false);
+            //convertView = inflater.inflate(android.R.layout.simple_dropdown_item_1line, parent, false);
+            convertView = inflater.inflate(R.layout.autocomplete_line, parent, false);
         }
         TextView text1 = (TextView) convertView.findViewById(android.R.id.text1);
+        TextView text2 = (TextView) convertView.findViewById(android.R.id.text2);
         // Populate the data into the template view using the data object
         text1.setText(getItem(position).name + ", "+getItem(position).country);
+        text2.setText(getItem(position).latitude + ", " + getItem(position).longitude);
+        text2.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+        final String lat = getItem(position).latitude;
+        final String lon = getItem(position).longitude;
+        text2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String url = "https://www.openstreetmap.org/#map=11/"+lat+"/"+lon;
+
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                mContext.startActivity(i);
+            }
+        });
+
         return convertView;
     }
 

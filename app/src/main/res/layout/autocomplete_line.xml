@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:orientation="horizontal"
+    android:weightSum="5"
+    android:gravity="center_vertical"
+    android:baselineAligned="false"
+    >
+
+    <TextView
+        android:id="@android:id/text1"
+        style="?android:attr/dropDownItemStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:ellipsize="marquee"
+        android:textAppearance="?android:attr/textAppearanceLargePopupMenu" />
+
+    <TextView
+        android:id="@android:id/text2"
+        style="?android:attr/dropDownItemStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:textColor="@color/colorAccent"
+        android:ellipsize="marquee"
+        android:textAppearance="?android:attr/textAppearanceLargePopupMenu" />
+</LinearLayout>
