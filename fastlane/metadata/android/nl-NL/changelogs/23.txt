@@ -1,0 +1,2 @@
+Klikbare GPS coördinate toegevoegd aan zoekresultaten. Bij klikken wordt de locatie van het zoekresultaat getoond in Osmand of in een browser.
+Mogelijkheid om te zoeken op land en op coördinaten toegevoegd.

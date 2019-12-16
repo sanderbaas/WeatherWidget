@@ -1,0 +1,2 @@
+Added clickable GPS coordinates to search results. When clicked the location of the search result is shown in Osmand or in a browser.
+Added ability to search on country and coordinates
