@@ -112,7 +112,21 @@ public class WeatherStationAutoCompleteAdapter extends BaseAdapter implements Fi
     private List<WeatherStation> findWeatherStations(Context context, String name) {
         WeatherStationsDatabase weatherStationsDatabase = new WeatherStationsDatabase(context);
         SQLiteDatabase db = weatherStationsDatabase.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM cities WHERE name LIKE '%"+name+"%' LIMIT 20;", null);
+        String[] parts = name.split(",");
+        String cityOrLat = parts[0];
+        String countryOrLon = "";
+        if (parts.length>1) {
+            countryOrLon = parts[1].trim();
+        }
+        Cursor cursor = db.rawQuery("SELECT * FROM cities" +
+                        " WHERE (name LIKE ? AND country LIKE ?)" +
+                        " OR (lat LIKE ? AND lon LIKE ?) LIMIT 20;",
+                new String[] {
+                        "%"+cityOrLat+"%",
+                        "%"+countryOrLon+"%",
+                        cityOrLat+"%",
+                        countryOrLon+"%"
+                });
         List<WeatherStation> searchResults = new ArrayList<WeatherStation>();
         try {
             while (cursor.moveToNext()) {
