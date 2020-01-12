@@ -69,7 +69,7 @@
         android:layout_below="@+id/widgetMetaData"
         android:columnCount="8"
         android:alignmentMode="alignBounds"
-        android:useDefaultMargins="true"
+        android:useDefaultMargins="false"
         android:layoutDirection="locale"
         android:rowCount="9">
     </GridLayout>

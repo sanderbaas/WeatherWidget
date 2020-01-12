@@ -3,7 +3,7 @@
     android:configure="nl.implode.weer.ForecastWidgetConfigureActivity"
     android:initialKeyguardLayout="@layout/forecast_widget"
     android:initialLayout="@layout/forecast_widget"
-    android:minHeight="250dp"
+    android:minHeight="200dp"
     android:minWidth="250dp"
     android:previewImage="@drawable/forecastwidget_preview"
     android:resizeMode="horizontal|vertical"

@@ -5,5 +5,6 @@
     android:layout_columnSpan="8"
     android:textSize="12sp"
     android:layout_margin="0dp"
+    android:layout_marginLeft="8dp"
     android:textColor="#000"
     android:id="@+id/day" />

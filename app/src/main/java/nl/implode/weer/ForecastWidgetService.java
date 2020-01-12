@@ -109,12 +109,12 @@ public class ForecastWidgetService extends JobIntentService {
 
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
             // portrait: minWidth x maxHeight
-            maxDays = (int) Math.floor((maxHeight-40)/90);
+            maxDays = (int) Math.floor((maxHeight-55)/85);
         }
 
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             // landscape: maxWidth x minHeight
-            maxDays = (int) Math.floor((minHeight-40)/90);
+            maxDays = (int) Math.floor((minHeight-55)/85);
         }
 
         views.setTextViewText(R.id.stationName, stationName);
