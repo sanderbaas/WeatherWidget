@@ -19,7 +19,7 @@ shown in 24-hour format of am/pm-format.
 A widget has a minimal size of 4 x 3 and can be larger. When a widget is larger, more forecasts will fit. It is
 possible to change the location after adding a widget by tapping the gear icon.
 
-This app is available in English, Dutch and German.
+This app is available in English, Dutch, German and Chinese.
 
 Weather icons thanks to (MerlinTheRed)[https://www.deviantart.com/merlinthered/art/plain-weather-icons-157162192]
 
