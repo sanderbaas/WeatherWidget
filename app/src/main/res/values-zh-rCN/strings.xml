@@ -11,7 +11,7 @@
     </string>
 
     <string name="pref_title_use_dark_theme">使用黑暗主题</string>
-    <string name="pref_description_use_dark_theme">使用黑暗主题并节省电量</string>
+    <string name="pref_description_use_dark_theme">使用黑暗主题以节省电量</string>
 
     <string name="pref_title_time">时间偏好</string>
     <string-array name="pref_time_list_titles">
@@ -33,7 +33,7 @@
         <item>1</item>
         <item>2</item>
     </string-array>
-    <string name="pref_title_rain_scale">降水单位</string>
+    <string name="pref_title_rain_scale">降雨/雪单位</string>
     <string-array name="pref_rain_scale_list_titles">
         <item>毫米</item>
         <item>英寸</item>
