@@ -1,0 +1,1 @@
+Adjust margin between forecasts when resizing widget
