@@ -3,9 +3,6 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
 
-    lintOptions {
-        abortOnError false
-    }
     defaultConfig {
         applicationId "nl.implode.weer"
         minSdkVersion 22
@@ -22,6 +19,10 @@ android {
         debug {
             applicationIdSuffix ".debug"
         }
+    }
+    namespace 'nl.implode.weer'
+    lint {
+        abortOnError false
     }
 }
 
