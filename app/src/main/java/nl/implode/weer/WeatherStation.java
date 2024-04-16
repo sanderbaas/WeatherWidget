@@ -17,6 +17,7 @@ import okhttp3.Response;
  * Created by sander on 19-1-17.
  */
 public class WeatherStation {
+    public String timeZone;
     public Integer _id;
     public String name;
     public String country;
@@ -29,19 +30,23 @@ public class WeatherStation {
         this.country = country;
         this.latitude = latitude;
         this.longitude = longitude;
+
+        this.timeZone = com.skedgo.converter.TimezoneMapper.latLngToTimezoneString(
+                Double.parseDouble(latitude),
+                Double.parseDouble(longitude)
+        );
     }
 
     // Constructor to convert JSON object into a Java class instance
     public WeatherStation(JSONObject object){
         try {
-            Log.d("nl.implode.weer", object.getString("name"));
             this._id = object.getInt("_id");
             this.name = object.getString("name");
             this.country = object.getString("country");
             this.longitude = "0";
             this.latitude = "0";
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e("nl.implode.weer", e.toString());
         }
     }
 
@@ -50,11 +55,15 @@ public class WeatherStation {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        String apiEntryPoint = "https://api.openweathermap.org/data/2.5/forecast?";
-        String appId = "fbc3d19917801786e46dbacd55d2ee9c";
-        Integer maxResults = 10;
+        String apiEntryPoint = "https://api.open-meteo.com/v1/forecast?";
 
-        String url = apiEntryPoint + "appid=" + appId + "&id=" + _id;
+        String url = apiEntryPoint +
+                "latitude=" + this.latitude +
+                "&longitude=" + this.longitude +
+                "&hourly=is_day,temperature_2m,precipitation,rain,snowfall,weather_code,wind_direction_10m,wind_speed_10m,uv_index" +
+                "&wind_speed_unit=ms" +
+                "&timezone=" + this.timeZone;
+
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
         String result = "";
